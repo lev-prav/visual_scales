@@ -15,9 +15,9 @@ include_directories(
 
 
 set(LIB_DIRS
-                        ${ARENA_DIR}/lib64
-                        ${ARENA_DIR}/GenICam/library/lib/Linux64_x64
-                        ${ARENA_DIR}/ffmpeg
+        ${ARENA_DIR}/GenICam/library/lib/Linux64_x64
+        ${ARENA_DIR}/lib64
+        ${ARENA_DIR}/ffmpeg
         )
 
 set(GENICAMLIBS GCBase_gcc54_v3_3_LUCID
@@ -29,7 +29,6 @@ set(GENICAMLIBS GCBase_gcc54_v3_3_LUCID
                 XmlParser_gcc54_v3_3_LUCID)
 
 
-
 set(FFMPEGLIBS  avcodec
                 avformat
                 avutil
@@ -39,15 +38,18 @@ set(FFMPEGLIBS  avcodec
 set(LIBS    arena
             save
             gentl
-            pthread
-            lucidlog
             ${GENICAMLIBS}
             ${FFMPEGLIBS}
+            pthread
+            lucidlog
         )
 
+link_directories(${LIB_DIRS})
 
-add_executable(tof  main.cpp
-                    Cpp_Save.cpp)
-target_link_libraries(tof  ${LIB_DIRS})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+
+add_executable(tof  Cpp_Save.cpp)
+target_link_libraries(tof  ${LIBS})
+
 #add_library(${LIBS})
 

@@ -103,7 +103,7 @@ void SaveImage(Arena::IImage* pImage, const char* filename)
 // =-=-=-=-=-=-=-=-=-
 
 
-int main2()
+int main()
 {
 	// flag to track when an exception has been thrown
 	bool exceptionThrown = false;
