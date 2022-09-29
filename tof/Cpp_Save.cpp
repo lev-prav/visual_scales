@@ -17,24 +17,9 @@
 
 #define TAB1 "  "
 
-// Save: Introduction
-//    This example introduces the basic save capabilities of the save library. It
-//    shows the construction of an image parameters object and an image writer,
-//    and saves a single image.
-
-// =-=-=-=-=-=-=-=-=-
-// =-=- SETTINGS =-=-
-// =-=-=-=-=-=-=-=-=-
-
-// pixel format
 #define PIXEL_FORMAT Coord3D_C16
 
-// File name
-//    The relative path and file name to save to. After running the example, an
-//    image should exist at the location specified. The image writer chooses the
-//    file format by the image's extension. Aside from PNG (.png), images can be
-//    saved as JPEG (.jpg), TIFF (.tiff), BMP (.bmp), and raw (.raw) files. For
-//    3D file formats the PLY (.ply) extension can be used.
+
 #define FILE_NAME "image.tiff"
 
 // =-=-=-=-=-=-=-=-=-
@@ -49,13 +34,6 @@
 // (5) destroys converted image
 void SaveImage(Arena::IImage* pImage, const char* filename)
 {
-
-	// Convert image
-	//    Convert the image to a displayable pixel format. It is worth keeping in
-	//    mind the best pixel and file formats for your application. This example
-	//    converts the image so that it is displayable by the operating system.
-	//std::cout << TAB1 << "Convert image to " << GetPixelFormatName(PIXEL_FORMAT) << "\n";
-
 	auto pConverted = Arena::ImageFactory::Convert(
 		pImage,
 		PIXEL_FORMAT);
