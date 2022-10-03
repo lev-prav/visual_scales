@@ -48,7 +48,7 @@ link_directories(${LIB_DIRS})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
-add_executable(tof  Cpp_Save.cpp ToFAPI.h ToFSensor.h AcquisitionThread.h)
+add_executable(tof  Cpp_Save.cpp ToFAPI.h ToFSensor.h AcquisitionThread.h IAcquirable.h ToFDevice.h)
 target_link_libraries(tof  ${LIBS})
 
 #add_library(${LIBS})

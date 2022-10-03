@@ -2,18 +2,23 @@
 // Created by lev on 29.09.22.
 //
 
+#include "IAcquirable.h"
+
 #ifndef TOF_ACQUISITIONTHREAD_H
 #define TOF_ACQUISITIONTHREAD_H
 
 template<class T>
 class AcquisitionThread {
-    T* dataSource;
-
+    IAcquirable<T>* dataSource;
 public:
-    AcquisitionThread(T* dataSource) : dataSource(dataSource){}
+    AcquisitionThread(IAcquirable<T>* dataSource) : dataSource(dataSource){}
 
-    int run(){
-
+    int run(bool* isRunning){
+        while(*isRunning){
+            auto data = dataSource->acquire();
+            dataSource->save(data);
+            dataSource->clean();
+        }
     }
 };
 

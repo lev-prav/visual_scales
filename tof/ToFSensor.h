@@ -5,7 +5,10 @@
 #ifndef TOF_TOFSENSOR_H
 #define TOF_TOFSENSOR_H
 
-#include "ArenaApi.h"
+\#include "ArenaApi.h"
+
+#include <cstdlib>
+#include <iostream>
 #include "SaveApi.h"
 #include "AcquisitionThread.h"
 
@@ -69,30 +72,6 @@ private:
         Arena::SetNodeValue<bool>(pDevice->GetTLStreamNodeMap(), "StreamPacketResendEnable", true);
     }
 
-    void saveImage(Arena::IImage* pImage, const char* filename){
-        auto pConverted = Arena::ImageFactory::Convert(
-                pImage,
-                PIXEL_FORMAT);
-
-        Save::ImageParams params(
-                pConverted->GetWidth(),
-                pConverted->GetHeight(),
-                pConverted->GetBitsPerPixel());
-
-        Save::ImageWriter writer(
-                params,
-                filename);
-
-        // Save image
-        //    Passing image data into the image writer using the cascading I/O
-        //    operator (<<) triggers a save. Notice that the << operator accepts the
-        //    image data as a constant unsigned 8-bit integer pointer (const
-        //    uint8_t*) and the file name as a character string (const char*).
-
-        writer << pConverted->GetData();
-        // destroy converted image
-        Arena::ImageFactory::Destroy(pConverted);
-    }
 };
 
 
