@@ -5,48 +5,53 @@
 #ifndef TOF_TOFDEVICE_H
 #define TOF_TOFDEVICE_H
 
-#include "IAcquirable.h"
+#include "ArenaApi.h"
+#include "SaveApi.h"
+#include "IDevice.h"
+#include "ToFSaver.h"
 
+#define PIXEL_FORMAT_TRANSFORM "Coord_C16"
 #define PIXEL_FORMAT Coord3D_C16
 
-class ToFDevice : IAcquirable<Arena::IImage>{
+class ToFDevice : public IDevice{
     Arena::IDevice* pDevice;
     Arena::IImage* pImage;
+    ToFSaver* saver;
 public:
-    ToFDevice(Arena::IDevice* pDevice) : pDevice(pDevice) {}
+    ToFDevice(Arena::IDevice* pDevice) :
+    pDevice(pDevice),
+    saver(new ToFSaver("tof_images")){}
 
-    Arena::IImage* acquire() override {
+    void start() override {
+        pDevice->StartStream();
+    }
+
+    void acquire() override {
         this->pImage = pDevice->GetImage(2000);
-        return pImage;
     }
 
-    int save() override {
-        auto pConverted = Arena::ImageFactory::Convert(
-                pImage,
-                PIXEL_FORMAT);
-
-        Save::ImageParams params(
-                pConverted->GetWidth(),
-                pConverted->GetHeight(),
-                pConverted->GetBitsPerPixel());
-
-        Save::ImageWriter writer(
-                params,
-                filename);
-
-        // Save image
-        //    Passing image data into the image writer using the cascading I/O
-        //    operator (<<) triggers a save. Notice that the << operator accepts the
-        //    image data as a constant unsigned 8-bit integer pointer (const
-        //    uint8_t*) and the file name as a character string (const char*).
-
-        writer << pConverted->GetData();
-        // destroy converted image
-        Arena::ImageFactory::Destroy(pConverted);
+    void save() override {
+        saver->save(pImage);
     }
-    int clean() override {
+
+    void clean() override {
         pDevice->RequeueBuffer(pImage);
-        return 0;
+    }
+
+    void stop() override {
+        pDevice->StopStream();
+    }
+
+    void prepareDevice(){
+        Arena::SetNodeValue<GenICam::gcstring>(
+                pDevice->GetNodeMap(),
+                "PixelFormat",
+                PIXEL_FORMAT_TRANSFORM);
+
+        // enable stream auto negotiate packet size
+        Arena::SetNodeValue<bool>(pDevice->GetTLStreamNodeMap(), "StreamAutoNegotiatePacketSize", true);
+        // enable stream packet resend
+        Arena::SetNodeValue<bool>(pDevice->GetTLStreamNodeMap(), "StreamPacketResendEnable", true);
     }
 };
 

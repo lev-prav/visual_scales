@@ -2,23 +2,43 @@
 // Created by lev on 29.09.22.
 //
 
-#include "IAcquirable.h"
-
 #ifndef TOF_ACQUISITIONTHREAD_H
 #define TOF_ACQUISITIONTHREAD_H
 
-template<class T>
-class AcquisitionThread {
-    IAcquirable<T>* dataSource;
-public:
-    AcquisitionThread(IAcquirable<T>* dataSource) : dataSource(dataSource){}
+#include "IDevice.h"
+#include <thread>
+#include <atomic>
 
-    int run(bool* isRunning){
-        while(*isRunning){
-            auto data = dataSource->acquire();
-            dataSource->save(data);
-            dataSource->clean();
-        }
+class AcquisitionThread {
+    IDevice* dataSource;
+    std::atomic<bool> isRunning {true};
+    std::thread* thread;
+public:
+    AcquisitionThread(IDevice* dataSource) : dataSource(dataSource){}
+
+    void run(){
+
+        thread = new std::thread([&](){
+            dataSource->start();
+
+            while(isRunning){
+                dataSource->acquire();
+                dataSource->save();
+                dataSource->clean();
+            }
+
+            dataSource->stop();
+        });
+
+    }
+
+    void stop(){
+        isRunning = false;
+        thread->join();
+    }
+
+    ~AcquisitionThread(){
+        delete dataSource;
     }
 };
 
