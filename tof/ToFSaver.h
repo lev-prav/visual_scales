@@ -9,6 +9,8 @@
 #include "ArenaApi.h"
 #include "SaveApi.h"
 #include <string>
+#include <iostream>
+#include <fstream>
 
 #define PIXEL_FORMAT Coord3D_C16
 
@@ -16,7 +18,8 @@ class ToFSaver {
 public:
     ToFSaver(const std::string& directory):
     base_filename(directory + '/' + "image_"),
-    counter(0) {}
+    counter(0),
+    fout("log.txt"){}
 
     int save(Arena::IImage* pImage)  {
         std::string fname = base_filename  + std::to_string(counter) + std::string(".tiff");
@@ -27,6 +30,8 @@ public:
         strftime(timestamp, 20, "S %T", timeinfo);
 
         std::cout<<'['<<timestamp<<"] "<<fname<<"\n";
+        fout<<'['<<timestamp<<"] "<<fname<<"\n";                            // write to file temporary
+
         saveImage(fname, pImage);
         counter++;
         return 0;
@@ -35,6 +40,7 @@ public:
 private:
     std::string base_filename;
     int counter;
+    std::ofstream fout;
 
     int saveImage(const std::string& filename, Arena::IImage* pImage){
         auto pConverted = Arena::ImageFactory::Convert(
