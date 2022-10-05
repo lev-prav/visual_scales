@@ -4,10 +4,12 @@
 
 #ifndef TOF_TOFSENSOR_H
 #define TOF_TOFSENSOR_H
+#pragma once
 
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <stdexcept>
 #include "ArenaApi.h"
 #include "SaveApi.h"
 #include "AcquisitionThread.h"
@@ -22,41 +24,62 @@ public:
         pSystem = Arena::OpenSystem();
         pSystem->UpdateDevices(100);
         systemDevices = pSystem->GetDevices();
-        if (systemDevices.size() == 0)
+        if (systemDevices.empty())
         {
             std::cout << "\nNo camera connected\nPress enter to complete\n";
             std::getchar();
-            return 0;
+            return EXIT_FAILURE;
         }
+        std::cout<<"ToF sensor successfully Connected!\n";
+        return EXIT_SUCCESS;
     }
 
-    int startStream(int deviceNumber = 0){
+    int startStream(int deviceNumber = 0) {
         if (pSystem == nullptr) return EXIT_FAILURE;
+        if (deviceNumber >= systemDevices.size() or deviceNumber < 0)
+            throw std::out_of_range("Device number out of range");
+
 
         //Arena::IDevice* pDevice = pSystem->CreateDevice(systemDevices[deviceNumber]);
-        ToFDevice* device = new ToFDevice(pSystem->CreateDevice(systemDevices[deviceNumber]));
+        auto* device =  new ToFDevice(pSystem, pSystem->CreateDevice(systemDevices[deviceNumber]));
+        std::cout<<"Device Preparation..\n";
         device->prepareDevice();
 
-        devices.push_back(device); // ??
+        devices.push_back(device);
 
-        acqThread = new AcquisitionThread(device); // ??
+        auto* acqThread = new AcquisitionThread(device);
         acqThread->run();
+        acqThreads.push_back(acqThread);
+        std::cout<<"Device number "<< deviceNumber << "starts streaming...\n";
+
     }
 
-    int stopStream(){
-        acqThread->stop();
+    int stopStream(int deviceNumber = 0){
+        if (deviceNumber >= acqThreads.size() or deviceNumber < 0)
+            throw std::out_of_range("Device number out of range");
+
+        acqThreads[deviceNumber]->stop();
+        std::cout<<"Device number "<< deviceNumber << "stop streaming...\n";
+    }
+
+    auto countAvailableDevices(){
+        return systemDevices.size();
+    }
+    auto countStreamingDevices(){
+        return devices.size();
     }
 
     ~ToFSensor(){
-        delete pSystem;
-        delete acqThread;
-
+        Arena::CloseSystem(pSystem);
+        for(AcquisitionThread* it : acqThreads){
+            delete it;
+        }
     }
 private:
     Arena::ISystem* pSystem = nullptr;
     std::vector<Arena::DeviceInfo> systemDevices;
-    AcquisitionThread* acqThread;
-    std::vector<ToFSensor*> devices;
+    std::vector<AcquisitionThread*> acqThreads;
+    std::vector<ToFDevice*> devices;
 
 };
 

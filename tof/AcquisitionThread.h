@@ -38,6 +38,7 @@ public:
     }
 
     ~AcquisitionThread(){
+        delete thread;
         delete dataSource;
     }
 };

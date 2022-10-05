@@ -6,6 +6,8 @@
 #define TOF_TOFSAVER_H
 
 #include "ISaver.h"
+#include "ArenaApi.h"
+#include "SaveApi.h"
 #include <string>
 
 #define PIXEL_FORMAT Coord3D_C16
@@ -17,7 +19,14 @@ public:
     counter(0) {}
 
     int save(Arena::IImage* pImage)  {
-        std::string fname = base_filename + '/' + std::to_string(counter) + std::string(".tiff");
+        std::string fname = base_filename  + std::to_string(counter) + std::string(".tiff");
+
+        time_t seconds = time(NULL);
+        tm* timeinfo = localtime(&seconds);
+        char timestamp[20];
+        strftime(timestamp, 20, "S %T", timeinfo);
+
+        std::cout<<'['<<timestamp<<"] "<<fname<<"\n";
         saveImage(fname, pImage);
         counter++;
         return 0;
@@ -39,7 +48,7 @@ private:
 
         Save::ImageWriter writer(
                 params,
-                filename);
+                filename.c_str());
 
         // Save image
         //    Passing image data into the image writer using the cascading I/O

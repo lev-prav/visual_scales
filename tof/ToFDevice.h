@@ -10,15 +10,13 @@
 #include "IDevice.h"
 #include "ToFSaver.h"
 
-#define PIXEL_FORMAT_TRANSFORM "Coord_C16"
+#define PIXEL_FORMAT_TRANSFORM "Coord3D_C16"
 #define PIXEL_FORMAT Coord3D_C16
 
 class ToFDevice : public IDevice{
-    Arena::IDevice* pDevice;
-    Arena::IImage* pImage;
-    ToFSaver* saver;
 public:
-    ToFDevice(Arena::IDevice* pDevice) :
+    ToFDevice(Arena::ISystem* pSystem, Arena::IDevice* pDevice) :
+    pSystem(pSystem),
     pDevice(pDevice),
     saver(new ToFSaver("tof_images")){}
 
@@ -53,6 +51,16 @@ public:
         // enable stream packet resend
         Arena::SetNodeValue<bool>(pDevice->GetTLStreamNodeMap(), "StreamPacketResendEnable", true);
     }
+
+    ~ToFDevice() {
+        pSystem->DestroyDevice(pDevice);
+        delete saver;
+    }
+private:
+    Arena::ISystem* pSystem;
+    Arena::IDevice* pDevice;
+    Arena::IImage* pImage;
+    ToFSaver* saver;
 };
 
 #endif //TOF_TOFDEVICE_H
