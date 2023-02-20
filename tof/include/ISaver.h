@@ -8,6 +8,8 @@
 class ISaver{
 public:
     virtual int save() = 0;
+
+    virtual ~ISaver() = default;
 };
 
 #endif //TOF_ISAVER_H

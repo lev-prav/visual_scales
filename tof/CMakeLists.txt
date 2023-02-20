@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.16)
 
 project(tof)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(ARENA_DIR /home/lev/data/ArenaSDK/ArenaSDK_Linux_x64)
 
@@ -48,12 +48,21 @@ link_directories(${LIB_DIRS})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
-add_executable(tof  main.cpp
-                    ToFSensor.h
-                    AcquisitionThread.h
-                    IDevice.h
-                    ToFDevice.h
-                    ToFSaver.h)
+set(HEADER_DIR include)
+set(SRC_DIR src)
+
+set(HEADERS ${HEADER_DIR}/ToFSensor.h
+            ${HEADER_DIR}/AcquisitionThread.h
+            ${HEADER_DIR}/IDevice.h
+            ${HEADER_DIR}/ToFDevice.h
+            ${HEADER_DIR}/ToFSaver.h )
+set(SOURCES ${HEADERS}
+            ${SRC_DIR}/ToFSensor.cpp
+            ${SRC_DIR}/AcquisitionThread.cpp
+            ${SRC_DIR}/ToFSaver.cpp)
+
+add_executable(tof  ${SOURCES}
+                    main.cpp)
 target_link_libraries(tof  ${LIBS})
 
 #add_library(${LIBS})

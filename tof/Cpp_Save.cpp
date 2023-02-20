@@ -112,7 +112,7 @@ int main()
 		int n = 0;
 		while(1) {
 			Arena::IImage* pImage = pDevice->GetImage(2000);
-	
+
 
 			std::string fname("images/image_");
 			fname += std::to_string(n) + std::string(".tiff");
@@ -121,7 +121,7 @@ int main()
             n++;
 			// clean up example
 			pDevice->RequeueBuffer(pImage);
-		}		
+		}
 		pDevice->StopStream();
 		pSystem->DestroyDevice(pDevice);
 		Arena::CloseSystem(pSystem);
