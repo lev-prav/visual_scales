@@ -1,1 +1,9 @@
 .idea/
+data/
+baslers/
+cmake/
+cmake-build-debug/
+bin/
+images/
+__pycache__/
+

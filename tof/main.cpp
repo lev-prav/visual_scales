@@ -4,7 +4,7 @@
 #include "include/ToFSensor.h"
 #include <chrono>
 
-int main(){
+int main(int argc, char** argv){
     std::string tofSerialNumber = "214100232";
     ToF::ToFSensor sensor;
 
@@ -17,7 +17,12 @@ int main(){
         std::cout << "\nGenICam exception thrown: " << ge.what() << "\n";
     }
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+    int time = 5000;
+    if (argc > 1){
+        time = atoi(argv[1]);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(time));
 
     sensor.stopStream();
 

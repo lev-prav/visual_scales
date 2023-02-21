@@ -31,9 +31,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <thread>
 
-#include <sl_lidar.h> 
-#include <sl_lidar_driver.h>
+#include "../../sdk/include/sl_lidar.h"
+#include "../../sdk/include/sl_lidar_driver.h"
 #ifndef _countof
 #define _countof(_Array) (int)(sizeof(_Array) / sizeof(_Array[0]))
 #endif
@@ -107,6 +108,9 @@ int main(int argc, const char * argv[]) {
 
 	bool useArgcBaudrate = false;
 
+    std::string save_dir = "/";
+    int work_mlseconds = 5000;
+
     IChannel* _channel;
 
     printf("Ultra simple LIDAR data grabber for SLAMTEC LIDAR.\n"
@@ -145,6 +149,15 @@ int main(int argc, const char * argv[]) {
 			// read ip addr from the command line...
 			opt_channel_param_first = argv[3];//or set to a fixed value: e.g. "192.168.11.2"
 			if (argc>4) opt_channel_param_second = strtoul(argv[4], NULL, 10);//e.g. "20108"
+            if (argc>4) {
+                save_dir = std::string(argv[5]) + "/";
+                work_mlseconds = atoi(argv[6]);
+                auto work = std::thread([&work_mlseconds](){
+                    sleep(work_mlseconds/1000);
+                    ctrlc(1);
+                });
+                work.detach();
+            }
 			opt_channel_type = CHANNEL_TYPE_TCP;
 		}
 		else
@@ -158,6 +171,8 @@ int main(int argc, const char * argv[]) {
 		print_usage(argc, argv);
         return -1;
 	}
+
+    std::cout<<save_dir<<"\n";
 
 	if(opt_channel_type == CHANNEL_TYPE_SERIALPORT)
 	{
@@ -298,23 +313,22 @@ int main(int argc, const char * argv[]) {
         time_t seconds = time(NULL);
         tm* timeinfo = localtime(&seconds);
         char timestamp[20];
-        // const char* format = "%T";
-        strftime(timestamp, 20, "S %T", timeinfo);
+        //const char* format = "%T";
+        strftime(timestamp, 20, "[%D %T]", timeinfo);
 
-	    std::ofstream rp_lidar_foutput("output.txt", std::ios::app);
+	    std::ofstream rp_lidar_foutput(save_dir + "/lidar_output.txt", std::ios::app);
 
         op_result = drv->grabScanDataHq(nodes, count);
 
         if (SL_IS_OK(op_result)) {
             if (rp_lidar_foutput.is_open()){
                 drv->ascendScanData(nodes, count);
-                //rp_lidar_foutput << std::endl << timestamp;
+                rp_lidar_foutput << std::endl << timestamp;
                 for (int pos = 0; pos < (int)count ; ++pos) {
                     rp_lidar_foutput << (nodes[pos].flag & SL_LIDAR_RESP_HQ_FLAG_SYNCBIT ?(timestamp):"          ")
                       << " theta: " << ((nodes[pos].angle_z_q14 * 90.f) / 16384.f) << " "
                       << "Dist: " << (nodes[pos].dist_mm_q2/4.0f) << " "
-                      << "Q " << (nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT)
-                      << std::endl;             
+                      << "Q " << (nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT)<<'\n';
                 }
             }
         }

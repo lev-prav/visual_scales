@@ -19,7 +19,7 @@ class ToFDevice : public IDevice {
 public:
     ToFDevice(Arena::IDevice *pDevice):
     pDevice(pDevice){
-        saver = std::make_unique<ToFSaver>("tof_images");
+        saver = std::make_unique<ToFSaver>("/home/lev/data/4Cameras/visual_scales/data/");
     }
 
     void start() override {

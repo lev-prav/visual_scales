@@ -21,7 +21,7 @@ for i in range(0, 256):
         if (i == 0 and j == 0) or (i == 255 and j == 255): 
             continue
 
-        ip = f"192.168.{i}.{j}"
+        ip = f"192.168.3.{j}"
         file.write(f"{ip}   ")
         ping(ip, verbose=True, count=1, timeout = 0.001, out = file)
         count += 1

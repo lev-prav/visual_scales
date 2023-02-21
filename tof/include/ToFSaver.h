@@ -17,9 +17,9 @@ namespace ToF{
 class ToFSaver {
 public:
     ToFSaver(const std::string &directory) :
-            base_filename(directory + '/' + "image_"),
+            base_filename(directory + "image_"),
             counter(0),
-            fout("log.txt") {}
+            fout(directory + "tof_log.txt") {}
 
     int save(Arena::IImage *pImage);
 
