@@ -6,4 +6,5 @@ cmake-build-debug/
 bin/
 images/
 __pycache__/
-
+data
+data_zapas
