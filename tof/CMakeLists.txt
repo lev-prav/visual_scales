@@ -4,7 +4,7 @@ project(tof)
 
 set(CMAKE_CXX_STANDARD 17)
 set(ARENA_DIR /home/lev/data/ArenaSDK/ArenaSDK_Linux_x64)
-set(IMGUI_DIR ../third-party/imgui)
+set(IMGUI_DIR third-party/imgui)
 
 include_directories(
         ${ARENA_DIR}/include/Arena
@@ -13,7 +13,6 @@ include_directories(
         ${ARENA_DIR}/GenICam/library/CPP/include
         ${IMGUI_DIR}
 )
-
 
 set(LIB_DIRS
         ${ARENA_DIR}/GenICam/library/lib/Linux64_x64
@@ -45,7 +44,9 @@ set(LIBS    arena
             pthread
             lucidlog
             imgui
-        )
+            GL)
+
+add_subdirectory(third-party/imgui)
 
 link_directories(${LIB_DIRS})
 
@@ -63,11 +64,15 @@ set(SOURCES ${HEADERS}
             ${SRC_DIR}/ToFSensor.cpp
             ${SRC_DIR}/AcquisitionThread.cpp
             ${SRC_DIR}/ToFSaver.cpp
+            ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+            ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+            ${IMGUI_DIR}/backends/imgui_impl_glfw.h
+            ${IMGUI_DIR}/backends/imgui_impl_opengl3.h
         )
 
 add_executable(tof  ${SOURCES}
                     main.cpp)
-target_link_libraries(tof  ${LIBS})
+target_link_libraries(tof  ${LIBS} )
 
 #add_library(${LIBS})
 
