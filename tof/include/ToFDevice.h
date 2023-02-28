@@ -27,7 +27,11 @@ public:
     }
 
     void acquire() override {
-        this->pImage = pDevice->GetImage(2000);
+        pImage = pDevice->GetImage(2000);
+        if (pImage->IsIncomplete()){
+            std::cout<<"INCOMPLETE IMAGE\n";
+            pImage = pDevice->GetImage(2000);
+        }
     }
 
     void save() override {

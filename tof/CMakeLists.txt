@@ -3,14 +3,15 @@ cmake_minimum_required(VERSION 3.16)
 project(tof)
 
 set(CMAKE_CXX_STANDARD 17)
-
 set(ARENA_DIR /home/lev/data/ArenaSDK/ArenaSDK_Linux_x64)
+set(IMGUI_DIR ../third-party/imgui)
 
 include_directories(
         ${ARENA_DIR}/include/Arena
         ${ARENA_DIR}/include/Save
         ${ARENA_DIR}/include/GenTL
         ${ARENA_DIR}/GenICam/library/CPP/include
+        ${IMGUI_DIR}
 )
 
 
@@ -18,6 +19,7 @@ set(LIB_DIRS
         ${ARENA_DIR}/GenICam/library/lib/Linux64_x64
         ${ARENA_DIR}/lib64
         ${ARENA_DIR}/ffmpeg
+        ${IMGUI_DIR}/cmake-build-debug
         )
 
 set(GENICAMLIBS GCBase_gcc54_v3_3_LUCID
@@ -42,6 +44,7 @@ set(LIBS    arena
             ${FFMPEGLIBS}
             pthread
             lucidlog
+            imgui
         )
 
 link_directories(${LIB_DIRS})
@@ -59,7 +62,8 @@ set(HEADERS ${HEADER_DIR}/ToFSensor.h
 set(SOURCES ${HEADERS}
             ${SRC_DIR}/ToFSensor.cpp
             ${SRC_DIR}/AcquisitionThread.cpp
-            ${SRC_DIR}/ToFSaver.cpp)
+            ${SRC_DIR}/ToFSaver.cpp
+        )
 
 add_executable(tof  ${SOURCES}
                     main.cpp)

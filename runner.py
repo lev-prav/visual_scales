@@ -62,11 +62,11 @@ lidar = Lidar(
     "lidar/rplidar_sdk/output/Linux/Release/ultra_simple", 
     "192.168.0.7",
     "20108",
-    "/home/lev/data/4Cameras/visual_scales/data",
+    "/home/lev/data/4Cameras/visual_scales/data/",
     timer
     )
 tof = Tof("tof/bin/tof", timer)
-basler = Camera("pylon_example/bin/pylon_example", "/home/lev/data/4Cameras/visual_scales/data")
+basler = Camera("pylon_example/bin/pylon_example", "/home/lev/data/4Cameras/visual_scales/data/")
 
 devices = [lidar, tof, basler]
 run_commands = []
@@ -81,3 +81,10 @@ run = " & \n".join(run_commands) + " & \n"
 print(run)
 
 os.system(run)
+
+"""
+lev@dimbass-MS-7851:~/data/4Cameras/visual_scales/lidar/rplidar_sdk/output/Linux/Release$ ./ultra_simple --channel --tcp 192.168.0.7 20108 /home/lev/data/4Cameras/visual_scales/data/ 10000
+"""
+10.128.0.90
+localhost, 127.0.0.0/8, ::1, 10.128.*.*, 192.168.*.*
+8080

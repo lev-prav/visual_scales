@@ -32,6 +32,8 @@
 #include <fstream>
 #include <sstream>
 #include <thread>
+#include <ctime>
+#include <chrono>
 
 #include "../../sdk/include/sl_lidar.h"
 #include "../../sdk/include/sl_lidar_driver.h"
@@ -150,7 +152,7 @@ int main(int argc, const char * argv[]) {
 			opt_channel_param_first = argv[3];//or set to a fixed value: e.g. "192.168.11.2"
 			if (argc>4) opt_channel_param_second = strtoul(argv[4], NULL, 10);//e.g. "20108"
             if (argc>4) {
-                save_dir = std::string(argv[5]) + "/";
+                save_dir = std::string(argv[5]);
                 work_mlseconds = atoi(argv[6]);
                 auto work = std::thread([&work_mlseconds](){
                     sleep(work_mlseconds/1000);
@@ -304,28 +306,33 @@ int main(int argc, const char * argv[]) {
         drv->setMotorSpeed();
     // start scan...
     drv->startScan(0,1);
+    
+    using namespace std::chrono;
 
     // fetech result and print it out...
     while (1) {        
+
+        int vals = 0;
         sl_lidar_response_measurement_node_hq_t nodes[8192];
         size_t   count = _countof(nodes);
+
+	    std::ofstream rp_lidar_foutput(save_dir + "/lidar_output_musor.txt", std::ios::app);
+
+        op_result = drv->grabScanDataHq(nodes, count);
+        milliseconds ms = duration_cast< milliseconds>(system_clock::now().time_since_epoch());
+        auto ms_count = ms.count();
 
         time_t seconds = time(NULL);
         tm* timeinfo = localtime(&seconds);
         char timestamp[20];
-        //const char* format = "%T";
+
         strftime(timestamp, 20, "[%D %T]", timeinfo);
-
-	    std::ofstream rp_lidar_foutput(save_dir + "/lidar_output.txt", std::ios::app);
-
-        op_result = drv->grabScanDataHq(nodes, count);
-
         if (SL_IS_OK(op_result)) {
             if (rp_lidar_foutput.is_open()){
                 drv->ascendScanData(nodes, count);
-                rp_lidar_foutput << std::endl << timestamp;
-                for (int pos = 0; pos < (int)count ; ++pos) {
-                    rp_lidar_foutput << (nodes[pos].flag & SL_LIDAR_RESP_HQ_FLAG_SYNCBIT ?(timestamp):"          ")
+                for (int pos = 0; pos < (int)count ; ++pos) { 
+
+                    rp_lidar_foutput <<ms_count << "_" <<timestamp
                       << " theta: " << ((nodes[pos].angle_z_q14 * 90.f) / 16384.f) << " "
                       << "Dist: " << (nodes[pos].dist_mm_q2/4.0f) << " "
                       << "Q " << (nodes[pos].quality >> SL_LIDAR_RESP_MEASUREMENT_QUALITY_SHIFT)<<'\n';

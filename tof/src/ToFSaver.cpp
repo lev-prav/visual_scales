@@ -1,12 +1,22 @@
 #include "../include/ToFSaver.h"
 #include <fstream>
+#include <chrono>
 
 int ToF::ToFSaver::save(Arena::IImage *pImage) {
-    std::string fname = base_filename + std::to_string(counter) + std::string(".tiff");
+    using namespace std::chrono;
+
+    milliseconds ms = duration_cast< milliseconds>(system_clock::now().time_since_epoch());
+
+    std::stringstream fname_stream;
+    fname_stream<<base_filename<<counter<<"_"<<ms.count()<<".tiff";
+    //std::string fname = base_filename + std::to_string(counter) + "_" + seconds +std::string(".tiff");
+
+    std::string fname = fname_stream.str();
 
     time_t seconds = time(NULL);
     tm *timeinfo = localtime(&seconds);
     char timestamp[20];
+
     strftime(timestamp, 20, "S %T", timeinfo);
 
     std::cout << '[' << timestamp << "] " << fname << "\n";

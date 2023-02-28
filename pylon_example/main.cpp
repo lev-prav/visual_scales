@@ -18,16 +18,18 @@ int main( int argc, char* argv[] )
     std::string save_dir = "../images/";
     if (argc > 1){
         save_dir = argv[1];
-        save_dir += "/";
     }
     auto stream = [&work, &save_dir](cam_ptr cam, int cam_index) {
         cam->StartGrabbing();
 
+        using namespace std::chrono;
+
         CGrabResultPtr ptrGrabResult;
+        int counter = 0;
 
-
-        for (uint32_t i = 0; cam->IsGrabbing() && work; ++i) {
+        for (uint32_t i = 0; cam->IsGrabbing() && work; ++i, counter++) {
             cam->RetrieveResult(20000, ptrGrabResult);
+            milliseconds ms = duration_cast< milliseconds>(system_clock::now().time_since_epoch());
 
             // Image grabbed successfully?
             if (ptrGrabResult->GrabSucceeded()) {
@@ -36,20 +38,31 @@ int main( int argc, char* argv[] )
 
 
                 // Print the index and the model name of the camera.
-                cout << "Camera " << cam_index << ": " << cam->GetDeviceInfo().GetModelName() << endl;
-
-                // Now, the image data can be processed.
-                cout << "GrabSucceeded: " << ptrGrabResult->GrabSucceeded() << endl;
-                cout << "SizeX: " << ptrGrabResult->GetWidth() << endl;
-                cout << "SizeY: " << ptrGrabResult->GetHeight() << endl;
-                const uint8_t *pImageBuffer = (uint8_t *) ptrGrabResult->GetBuffer();
-                cout << "Gray value of first pixel: " << (uint32_t) pImageBuffer[0] << endl << endl;
+                cout << "Camera " << cam_index << ": " << cam->GetDeviceInfo().GetModelName() <<"\n"
+                        << "GrabSucceeded: " << ptrGrabResult->GrabSucceeded()<<"\n"
+                        << "SizeX: " << ptrGrabResult->GetWidth() << "\n"
+                        << "SizeY: " << ptrGrabResult->GetHeight() << "\n";
 
                 CPylonImage image;
                 image.AttachGrabResultBuffer( ptrGrabResult );
-                image.Save(Pylon::ImageFileFormat_Tiff,
-                           (save_dir + std::to_string(cam_index) + "_" +
-                           std::to_string(ptrGrabResult->GetTimeStamp()) + ".tiff").c_str());
+                std::stringstream fname_stream;
+                fname_stream <<save_dir<< cam_index<<"_"<< counter<<"_"<<ms.count()<< ".tiff";
+                std::string path = fname_stream.str();
+                std::cout<<path;
+                image.Save(Pylon::ImageFileFormat_Tiff,path.c_str());
+
+               /* try {
+                    CPylonImage image;
+                    image.AttachGrabResultBuffer( ptrGrabResult );
+                    std::stringstream fname_stream;
+                    fname_stream <<save_dir<< cam_index<<"_"<< counter<<"_"<<ms.count()<< ".tiff";
+                    std::string path = fname_stream.str();
+                    std::cout<<path;
+                    image.Save(Pylon::ImageFileFormat_Tiff,path.c_str());
+
+                } catch(const GenericException& ex){
+                    std::cout<<ex.what()<<"\n";
+                }*/
 
             } else {
                 cout << "Error: " << std::hex << ptrGrabResult->GetErrorCode() << std::dec << " "
