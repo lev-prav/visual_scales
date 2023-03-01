@@ -4,21 +4,22 @@ project(tof)
 
 set(CMAKE_CXX_STANDARD 17)
 set(ARENA_DIR /home/lev/data/ArenaSDK/ArenaSDK_Linux_x64)
-set(IMGUI_DIR third-party/imgui)
+set(THIRD_PARTY third-party)
 
 include_directories(
         ${ARENA_DIR}/include/Arena
         ${ARENA_DIR}/include/Save
         ${ARENA_DIR}/include/GenTL
         ${ARENA_DIR}/GenICam/library/CPP/include
-        ${IMGUI_DIR}
+        ${THIRD_PARTY}/imgui
+        ${THIRD_PARTY}/stb
 )
 
 set(LIB_DIRS
         ${ARENA_DIR}/GenICam/library/lib/Linux64_x64
         ${ARENA_DIR}/lib64
         ${ARENA_DIR}/ffmpeg
-        ${IMGUI_DIR}/cmake-build-debug
+        ${THIRD_PARTY}/imgui/cmake-build-debug
         )
 
 set(GENICAMLIBS GCBase_gcc54_v3_3_LUCID
@@ -59,16 +60,18 @@ set(HEADERS ${HEADER_DIR}/ToFSensor.h
             ${HEADER_DIR}/AcquisitionThread.h
             ${HEADER_DIR}/IDevice.h
             ${HEADER_DIR}/ToFDevice.h
-            ${HEADER_DIR}/ToFSaver.h )
+            ${HEADER_DIR}/ToFSaver.h
+            ${HEADER_DIR}/gui/show_image.h
+            ${THIRD_PARTY}/stb/stb_image.h)
 set(SOURCES ${HEADERS}
             ${SRC_DIR}/ToFSensor.cpp
             ${SRC_DIR}/AcquisitionThread.cpp
             ${SRC_DIR}/ToFSaver.cpp
-            ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
-            ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
-            ${IMGUI_DIR}/backends/imgui_impl_glfw.h
-            ${IMGUI_DIR}/backends/imgui_impl_opengl3.h
-        )
+            ${THIRD_PARTY}/imgui/backends/imgui_impl_glfw.cpp
+            ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.cpp
+            ${THIRD_PARTY}/imgui/backends/imgui_impl_glfw.h
+            ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.h
+            ${SRC_DIR}/gui/show_image.cpp)
 
 add_executable(tof  ${SOURCES}
                     main.cpp)
