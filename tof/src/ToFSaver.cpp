@@ -31,7 +31,7 @@ int ToF::ToFSaver::saveImage(const std::string &filename, Arena::IImage *pImage)
     auto pConverted = Arena::ImageFactory::Convert(
             pImage,
             PIXEL_FORMAT);
-
+    auto data = pImage->GetData();
     Save::ImageParams params(
             pConverted->GetWidth(),
             pConverted->GetHeight(),

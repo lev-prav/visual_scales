@@ -71,7 +71,7 @@ set(SOURCES ${HEADERS}
             ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.cpp
             ${THIRD_PARTY}/imgui/backends/imgui_impl_glfw.h
             ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.h
-            ${SRC_DIR}/gui/show_image.cpp src/gui/Viewer.cpp src/gui/Viewer.h)
+            ${SRC_DIR}/gui/show_image.cpp src/gui/Viewer.cpp include/gui/Viewer.h include/Image.h include/gui/Texture.h)
 
 add_executable(tof  ${SOURCES}
                     main.cpp)

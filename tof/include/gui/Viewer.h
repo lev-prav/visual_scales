@@ -4,7 +4,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <cstdio>
-#include <GLFW/glfw3.h> // Will drag system OpenGL headers
+#include "GLFW/glfw3.h" // Will drag system OpenGL headers
 #include <vector>
 
 #include "stb_image.h"
@@ -21,10 +21,13 @@ class Viewer {
 public:
     int run();
 private:
-    GLuint get_texture();
     ImGuiIO& configure_context(GLFWwindow* window);
 
-    static void glfw_error_callback(int error, const char* description)
+    void create_stream_window(const GLuint& texture, unsigned char** images );
+    void rendering(GLFWwindow* window, ImGuiIO& io);
+    void stop(GLFWwindow* window);
+
+        static void glfw_error_callback(int error, const char* description)
     {
         fprintf(stderr, "Glfw Error %d: %s\n", error, description);
     }
