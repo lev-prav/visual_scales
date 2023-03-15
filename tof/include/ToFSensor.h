@@ -8,6 +8,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <utility>
 #include <vector>
 #include <stdexcept>
 #include "ArenaApi.h"
@@ -18,7 +19,7 @@
 namespace  ToF {
     class ToFSensor {
     public:
-        ToFSensor() = default;
+        explicit ToFSensor(std::shared_ptr<Buffer> buffer_ptr) : buffer_(std::move(buffer_ptr)) {}
 
         int connect();
 
@@ -44,6 +45,7 @@ namespace  ToF {
         std::vector<std::unique_ptr<AcquisitionThread>> acqThreads;
         std::vector<std::shared_ptr<ToFDevice>> devices;
 
+        std::shared_ptr<Buffer> buffer_;
     };
 };
 

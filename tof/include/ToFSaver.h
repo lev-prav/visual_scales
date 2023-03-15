@@ -8,6 +8,8 @@
 #include "ISaver.h"
 #include "ArenaApi.h"
 #include "SaveApi.h"
+#include "buffer/BufferReader.h"
+#include "Image.h"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -16,19 +18,27 @@
 namespace ToF{
 class ToFSaver {
 public:
-    ToFSaver(const std::string &directory) :
+    ToFSaver(const std::string &directory, std::shared_ptr<BufferReader> reader) :
             base_filename(directory + "image_"),
             counter(0),
-            fout(directory + "tof_log.txt") {}
+            fout(directory + "tof_log.txt"),
+            bufferReader_(reader)
+            {}
 
-    int save(Arena::IImage *pImage);
+    int run();
 
 private:
-    std::string base_filename;
+
+    int saveImage(const std::string &filename, const Image& image);
+    void log(const std::string& fname);
+    int read_buffer();
+
+    bool work = true;
     int counter;
     std::ofstream fout;
+    std::string base_filename;
+    std::shared_ptr<BufferReader> bufferReader_;
 
-    int saveImage(const std::string &filename, Arena::IImage *pImage);
 };
 
 

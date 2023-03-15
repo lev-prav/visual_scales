@@ -1,8 +1,9 @@
+#include <iostream>
 #include "../../include/gui/Viewer.h"
 #include "../../include/gui/Texture.h"
 
 static int counter = 0;
-int image_width = 720, image_height = 480;
+int image_width = 640, image_height = 480;
 
 
 ImGuiIO& Viewer::configure_context(GLFWwindow* window){
@@ -45,14 +46,17 @@ ImGuiIO& Viewer::configure_context(GLFWwindow* window){
     return io;
 }
 
-void Viewer::create_stream_window(const GLuint &texture, unsigned char **images) {
+void Viewer::create_stream_window(const GLuint &texture) {
     // MY IMAGE
 
     ImGui::Begin("OpenGL Texture Text");
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, images[counter%2]);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, images[counter%2]);
 
-    ImGui::Text("pointer = %p", &images[counter%2]);
+    update_image();
+
     ImGui::Text("size = %d x %d", image_width, image_height);
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
     ImGui::Image((void*)(intptr_t)texture, ImVec2(image_width, image_height));
     if (ImGui::Button("Change picture"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
         counter++;
@@ -114,20 +118,15 @@ int Viewer::run() {
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    unsigned char* image_anime = stbi_load(  "../res/anime_resize.jpg", &image_width, &image_height, NULL, 4);
-    unsigned char* image_goblin = stbi_load("../res/goblin_resize.jpg", &image_width, &image_height, NULL, 4);
-    unsigned char* images[2] = {image_anime, image_goblin};
+//    unsigned char* image_anime = stbi_load(  "../res/anime_resize.jpg", &image_width, &image_height, NULL, 4);
+//    unsigned char* image_goblin = stbi_load("../res/goblin_resize.jpg", &image_width, &image_height, NULL, 4);
+//    unsigned char* images[2] = {image_anime, image_goblin};
 
     Texture texture = Texture::create_texture();
 
     // Main loop
     while (!glfwWindowShouldClose(window))
     {
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
         glfwPollEvents();
 
         // Start the Dear ImGui frame
@@ -136,7 +135,7 @@ int Viewer::run() {
         ImGui::NewFrame();
 
 
-        create_stream_window(texture.get_texture_id(), images);
+        create_stream_window(texture.get_texture_id());
 
         rendering(window, io);
 
@@ -149,5 +148,28 @@ int Viewer::run() {
 }
 
 
+int Viewer::update_image( ) {
+    auto read_data = bufferReader_->get_data();
+    if (!read_data.has_value()){
+        return 1;
+    }
 
+    auto image = read_data.value();
+    auto raw_image = image.data.get();
 
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R16,
+                 image.width, image.height, 0,
+                 GL_LUMINANCE, GL_UNSIGNED_SHORT,
+                 raw_image);
+
+    //bufferReader_->move_forward();
+
+//    unsigned short* ptr_16 = reinterpret_cast<unsigned short *>(raw_image);
+//    std::cout<<"\n";
+//    for(int i = 0; i < 640; i++){
+//        std::cout<<ptr_16[i]<<" ";
+//    }
+//    std::cout<<"\n";
+
+    return 0;
+}

@@ -8,7 +8,7 @@
 #include "ArenaApi.h"
 #include "SaveApi.h"
 #include "IDevice.h"
-#include "ToFSaver.h"
+#include "buffer/Buffer.h"
 
 #define PIXEL_FORMAT_TRANSFORM "Coord3D_C16"
 #define PIXEL_FORMAT Coord3D_C16
@@ -17,92 +17,33 @@
 namespace ToF{
 class ToFDevice : public IDevice {
 public:
-    ToFDevice(Arena::IDevice *pDevice):
-    pDevice(pDevice){
-        saver = std::make_unique<ToFSaver>("/home/lev/data/4Cameras/visual_scales/data/");
+    ToFDevice(Arena::IDevice *pDevice, const std::shared_ptr<Buffer>& buffer):
+    pDevice_(pDevice), buffer_(buffer){
+        //saver = std::make_unique<ToFSaver>("/home/lev/data/4Cameras/visual_scales/data/");
     }
 
     void start() override {
-        pDevice->StartStream();
+        pDevice_->StartStream();
     }
 
     void acquire() override {
-        pImage = pDevice->GetImage(2000);
-        if (pImage->IsIncomplete()){
-            std::cout<<"INCOMPLETE IMAGE\n";
-            pImage = pDevice->GetImage(2000);
-        }
+        pImage_ = pDevice_->GetImage(2000);
     }
 
-    void save() override {
-        saver->save(pImage);
-    }
+    void save() override;
 
     void clean() override {
-        pDevice->RequeueBuffer(pImage);
+        pDevice_->RequeueBuffer(pImage_);
     }
 
     void stop() override {
-        pDevice->StopStream();
+        pDevice_->StopStream();
     }
 
-    void prepareDevice() {
-        Arena::SetNodeValue<GenICam::gcstring>(
-                pDevice->GetNodeMap(),
-                "PixelFormat",
-                PIXEL_FORMAT_TRANSFORM);
+    void prepareDevice();
 
-        // enable stream auto negotiate packet size
-        Arena::SetNodeValue<bool>(pDevice->GetTLStreamNodeMap(), "StreamAutoNegotiatePacketSize", true);
-        // enable stream packet resend
-        Arena::SetNodeValue<bool>(pDevice->GetTLStreamNodeMap(), "StreamPacketResendEnable", true);
-
-        // synchronization
-        // source voltage
-        Arena::SetNodeValue<GenICam::gcstring>(
-                pDevice->GetNodeMap(),
-                "LineSelector",
-                "Line4");
-
-        Arena::SetNodeValue<GenICam::gcstring>(
-                pDevice->GetNodeMap(),
-                "LineMode",
-                "Output");
-
-        Arena::SetNodeValue<bool>(
-                pDevice->GetNodeMap(),
-                "VoltageExternalEnable",
-                true);
-
-        Arena::SetNodeValue<GenICam::gcstring>(
-                pDevice->GetNodeMap(),
-                "LineActivationVoltage",
-                "Low");
-
-        // signal line
-        Arena::SetNodeValue<GenICam::gcstring>(
-                pDevice->GetNodeMap(),
-                "LineSelector",
-                "Line1");
-
-        Arena::SetNodeValue<GenICam::gcstring>(
-                pDevice->GetNodeMap(),
-                "LineMode",
-                "Output");
-
-        Arena::SetNodeValue<bool>(
-                pDevice->GetNodeMap(),
-                "LineInverter",
-                true);
-
-        Arena::SetNodeValue<GenICam::gcstring>(
-                pDevice->GetNodeMap(),
-                "LineSource",
-                "ExposureActive");
-
-    }
     Arena::IDevice* getDevicePtr(){
-        return pDevice;
+        return pDevice_;
     }
 
     ~ToFDevice() override {
@@ -110,9 +51,9 @@ public:
     }
 
 private:
-    Arena::IDevice* pDevice;
-    Arena::IImage* pImage;
-    std::unique_ptr<ToFSaver> saver;
+    Arena::IDevice* pDevice_;
+    Arena::IImage* pImage_;
+    std::shared_ptr<Buffer> buffer_;
 };
 
 }

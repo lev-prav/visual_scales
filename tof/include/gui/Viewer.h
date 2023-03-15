@@ -5,9 +5,11 @@
 #include "imgui_impl_opengl3.h"
 #include <cstdio>
 #include "GLFW/glfw3.h" // Will drag system OpenGL headers
+#include <utility>
 #include <vector>
 
 #include "stb_image.h"
+#include "../buffer/BufferReader.h"
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -19,18 +21,23 @@
 
 class Viewer {
 public:
+    explicit Viewer(std::shared_ptr<BufferReader> reader) : bufferReader_(std::move(reader)) {}
+
     int run();
 private:
     ImGuiIO& configure_context(GLFWwindow* window);
 
-    void create_stream_window(const GLuint& texture, unsigned char** images );
+//    void create_stream_window( unsigned char** images );
+    int update_image( );
+    void create_stream_window(const GLuint &textur);
     void rendering(GLFWwindow* window, ImGuiIO& io);
     void stop(GLFWwindow* window);
 
-        static void glfw_error_callback(int error, const char* description)
-    {
+    static void glfw_error_callback(int error, const char* description){
         fprintf(stderr, "Glfw Error %d: %s\n", error, description);
     }
+
+    std::shared_ptr<BufferReader> bufferReader_;
 };
 
 

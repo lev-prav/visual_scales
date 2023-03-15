@@ -29,8 +29,8 @@ int ToF::ToFSensor::startStream(const std::string& serialNumber) {
         }
     }
 
-    //Arena::IDevice* pDevice = pSystem->CreateDevice(systemDevices[deviceNumber]);
-    auto device = std::make_shared<ToFDevice>(pSystem->CreateDevice(*deviceInfo));
+    //Arena::IDevice* pDevice_ = pSystem->CreateDevice(systemDevices[deviceNumber]);
+    auto device = std::make_shared<ToFDevice>(pSystem->CreateDevice(*deviceInfo),buffer_);
     std::cout << "Device Preparation..\n";
     device->prepareDevice();
     devices.push_back(device);
