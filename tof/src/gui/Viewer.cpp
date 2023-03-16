@@ -162,7 +162,7 @@ int Viewer::update_image( ) {
                  GL_LUMINANCE, GL_UNSIGNED_SHORT,
                  raw_image);
 
-    //bufferReader_->move_forward();
+    bufferReader_->move_forward();
 
 //    unsigned short* ptr_16 = reinterpret_cast<unsigned short *>(raw_image);
 //    std::cout<<"\n";

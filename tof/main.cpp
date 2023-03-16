@@ -30,12 +30,6 @@ int main(int argc, char** argv){
         sensor.stopStream();
     });
 
-    auto save_thread = std::thread([&buffer_ptr, &save_dir](){
-        auto reader = buffer_ptr->get_reader();
-
-        ToF::ToFSaver saver(save_dir, reader);
-        saver.run();
-    });
 
     auto gui_thread = std::thread([&buffer_ptr](){
         auto reader = buffer_ptr->get_reader();
@@ -44,9 +38,15 @@ int main(int argc, char** argv){
         viewer.run();
     });
 
+    auto save_thread = std::thread([&buffer_ptr, &save_dir](){
+        auto reader = buffer_ptr->get_reader();
+
+        ToF::ToFSaver saver(save_dir, reader);
+        saver.run();
+    });
+
     tof_thread.join();
     gui_thread.join();
-
-
+    save_thread.join();
     return 0;
 }

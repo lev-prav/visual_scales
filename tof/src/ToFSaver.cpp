@@ -40,13 +40,12 @@ int ToF::ToFSaver::saveImage(const std::string &filename, const Image& image)  {
             params,
             filename.c_str());
 
-    // Save image
-    //    Passing image data into the image writer using the cascading I/O
-    //    operator (<<) triggers a save. Notice that the << operator accepts the
-    //    image data as a constant unsigned 8-bit integer pointer (const
-    //    uint8_t*) and the file name as a character string (const char*).
+    int data_size = image.width*image.width*(image.bits_per_pixel/8);
 
-    writer << image.data.get();
+    auto* save_image_data = new unsigned char[data_size];
+    std::memcpy(save_image_data,image.data.get(), data_size);
+    writer << save_image_data;
+    delete[] save_image_data;
 }
 
 void ToF::ToFSaver::log(const std::string& fname) {
