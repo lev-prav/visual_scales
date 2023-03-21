@@ -13,7 +13,6 @@ void ToF::ToFDevice::save() {
 
 
     unsigned char* data = new unsigned char [buff_size];
-    unsigned char* image_data = new unsigned char [buff_size];
 
     auto size = pImage_->GetSizeOfBuffer();
     memcpy(data, (unsigned char*)pImage_->GetData(), buff_size);
@@ -22,7 +21,6 @@ void ToF::ToFDevice::save() {
             pImage_,
             Mono8);
 
-    memcpy(image_data, (unsigned char*)rgb_image->GetData(), bytes_per_pixel);
     auto bits = rgb_image->GetBitsPerPixel();
     std::cout<<"Convert bits :"<<bits<<" : "<<pImage_->GetBitsPerPixel()<<"\n";
     buffer_->push_back(

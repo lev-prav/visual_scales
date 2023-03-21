@@ -28,7 +28,7 @@ private:
     ImGuiIO& configure_context(GLFWwindow* window);
 
 //    void create_stream_window( unsigned char** images );
-    int update_image( );
+    int update_image(int& im_width, int& im_height);
     void create_stream_window(const GLuint &textur);
     void rendering(GLFWwindow* window, ImGuiIO& io);
     void stop(GLFWwindow* window);
@@ -38,6 +38,8 @@ private:
     }
 
     std::shared_ptr<BufferReader> bufferReader_;
+    bool activated = false;
+    bool stop_view = false;
 };
 
 

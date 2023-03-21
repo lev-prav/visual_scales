@@ -23,6 +23,8 @@ namespace  ToF {
 
         int connect();
 
+        int run();
+
         int startStream(const std::string& serialNumber);
 
         int stopStream(int deviceNumber = 0);

@@ -1,9 +1,9 @@
 #include <iostream>
 #include "../../include/gui/Viewer.h"
 #include "../../include/gui/Texture.h"
+#include <cstdio>
 
 static int counter = 0;
-int image_width = 640, image_height = 480;
 
 
 ImGuiIO& Viewer::configure_context(GLFWwindow* window){
@@ -49,17 +49,23 @@ ImGuiIO& Viewer::configure_context(GLFWwindow* window){
 void Viewer::create_stream_window(const GLuint &texture) {
     // MY IMAGE
 
-    ImGui::Begin("OpenGL Texture Text");
+    ImGui::Begin("Stream");
     //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, images[counter%2]);
+    int im_width = 640, im_height = 480;
+    update_image(im_width, im_height);
 
-    update_image();
-
-    ImGui::Text("size = %d x %d", image_width, image_height);
+    ImGui::Text("size = %d x %d", im_width, im_height);
+    ImGui::Text("Scanner state: %s", (activated) ? "ON" : "OFF");
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-    ImGui::Image((void*)(intptr_t)texture, ImVec2(image_width, image_height));
-    if (ImGui::Button("Change picture"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-        counter++;
+    ImGui::Image((void*)(intptr_t)texture, ImVec2(im_width, im_height));
+    if (ImGui::Button((!activated) ? "Start scanning" : "Stop scanning")){
+        // Buttons return true when clicked (most widgets return true when edited/activated)
+        activated = !activated;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Somebody STOP ME") )
+        stop_view = true;
     ImGui::End();
 
     //glDeleteTextures(1, &texture);
@@ -113,19 +119,10 @@ int Viewer::run() {
 
     ImGuiIO& io = configure_context(window);
 
-    // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-//    unsigned char* image_anime = stbi_load(  "../res/anime_resize.jpg", &image_width, &image_height, NULL, 4);
-//    unsigned char* image_goblin = stbi_load("../res/goblin_resize.jpg", &image_width, &image_height, NULL, 4);
-//    unsigned char* images[2] = {image_anime, image_goblin};
-
     Texture texture = Texture::create_texture();
 
     // Main loop
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window) and !stop_view)
     {
         glfwPollEvents();
 
@@ -148,7 +145,7 @@ int Viewer::run() {
 }
 
 
-int Viewer::update_image( ) {
+int Viewer::update_image(int& im_width, int& im_height) {
     auto read_data = bufferReader_->get_data();
     if (!read_data.has_value()){
         return 1;
@@ -156,6 +153,8 @@ int Viewer::update_image( ) {
 
     auto image = read_data.value();
     auto raw_image = image.data.get();
+
+    im_width = image.width, im_height = image.height;
 
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R16,
                  image.width, image.height, 0,

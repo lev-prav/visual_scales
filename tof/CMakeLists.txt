@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(tof)
 
+
 set(CMAKE_CXX_STANDARD 17)
 set(ARENA_DIR /home/lev/data/ArenaSDK/ArenaSDK_Linux_x64)
 set(THIRD_PARTY third-party)
@@ -62,15 +63,17 @@ set(HEADERS ${HEADER_DIR}/ToFSensor.h
             ${HEADER_DIR}/ToFDevice.h
             ${HEADER_DIR}/ToFSaver.h
             ${HEADER_DIR}/gui/show_image.h
-            ${THIRD_PARTY}/stb/stb_image.h)
+            ${THIRD_PARTY}/stb/stb_image.h
+            ${THIRD_PARTY}/imgui/backends/imgui_impl_glfw.h
+            ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.h
+        )
+
 set(SOURCES ${HEADERS}
             ${SRC_DIR}/ToFSensor.cpp
             ${SRC_DIR}/AcquisitionThread.cpp
             ${SRC_DIR}/ToFSaver.cpp
             ${THIRD_PARTY}/imgui/backends/imgui_impl_glfw.cpp
             ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.cpp
-            ${THIRD_PARTY}/imgui/backends/imgui_impl_glfw.h
-            ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.h
             ${SRC_DIR}/gui/show_image.cpp
         src/gui/Viewer.cpp
         include/gui/Viewer.h
@@ -82,9 +85,11 @@ set(SOURCES ${HEADERS}
         include/buffer/BufferReader.h
         src/buffer/BufferReader.cpp)
 
-add_executable(tof  ${SOURCES}
-                    main.cpp)
-target_link_libraries(tof  ${LIBS} )
+#add_executable(tof  ${SOURCES}
+#                    main.cpp)
+#target_link_libraries(tof  ${LIBS} )
 
-#add_library(${LIBS})
+
+add_library(tof ${SOURCES})
+target_link_libraries(tof ${LIBS})
 

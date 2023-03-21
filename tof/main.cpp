@@ -42,7 +42,7 @@ int main(int argc, char** argv){
         auto reader = buffer_ptr->get_reader();
 
         ToF::ToFSaver saver(save_dir, reader);
-        saver.run();
+        //saver.run();
     });
 
     tof_thread.join();

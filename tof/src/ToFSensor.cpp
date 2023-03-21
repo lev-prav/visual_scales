@@ -71,3 +71,16 @@ std::vector<Arena::DeviceInfo>::iterator ToF::ToFSensor::getToFDevice(const std:
 
     return it;
 }
+
+int ToF::ToFSensor::run() {
+    try {
+        sensor.connect();
+        sensor.startStream(tofSerialNumber);
+    }
+    catch (GenICam::GenericException& ge)
+    {
+        std::cout << "\nGenICam exception thrown: " << ge.what() << "\n";
+    }
+
+    sensor.stopStream();
+}
