@@ -62,6 +62,7 @@ void Viewer::create_stream_window(const GLuint &texture) {
     if (ImGui::Button((!activated) ? "Start scanning" : "Stop scanning")){
         // Buttons return true when clicked (most widgets return true when edited/activated)
         activated = !activated;
+        onActivate();
     }
     ImGui::SameLine();
     if (ImGui::Button("Somebody STOP ME") )
@@ -171,4 +172,12 @@ int Viewer::update_image(int& im_width, int& im_height) {
 //    std::cout<<"\n";
 
     return 0;
+}
+
+void Viewer::onActivate() {
+    activation_callback(activated);
+}
+
+void Viewer::set_activation_listener() {
+
 }

@@ -14,13 +14,14 @@ int ToF::ToFSensor::connect() {
     return EXIT_SUCCESS;
 }
 
-int ToF::ToFSensor::startStream(const std::string& serialNumber) {
+int ToF::ToFSensor::startStream() {
     if (pSystem == nullptr) return EXIT_FAILURE;
+    if (serial_.empty()) return EXIT_FAILURE;
 
-    auto deviceInfo = getToFDevice(serialNumber);
+    auto deviceInfo = getToFDevice(serial_);
 
     if (deviceInfo == systemDevices.end()){
-        throw std::invalid_argument("NO TOF SENSOR " + serialNumber);
+        throw std::invalid_argument("NO TOF SENSOR " + serial_);
     }
     int k = 0 ;
     for(auto i = systemDevices.begin(); i != systemDevices.end(); i++, k++){
@@ -39,7 +40,7 @@ int ToF::ToFSensor::startStream(const std::string& serialNumber) {
     acqThread->run();
 
     acqThreads.push_back(std::move(acqThread));
-    std::cout << "Device number " << serialNumber << "starts streaming...\n";
+    std::cout << "Device number " << serial_ << "starts streaming...\n";
 
     return 0;
 }
@@ -73,14 +74,29 @@ std::vector<Arena::DeviceInfo>::iterator ToF::ToFSensor::getToFDevice(const std:
 }
 
 int ToF::ToFSensor::run() {
-    try {
-        sensor.connect();
-        sensor.startStream(tofSerialNumber);
-    }
-    catch (GenICam::GenericException& ge)
-    {
-        std::cout << "\nGenICam exception thrown: " << ge.what() << "\n";
-    }
 
-    sensor.stopStream();
+    acquisition_thread = std::thread([this](){
+        try {
+            connect();
+            startStream();
+        }
+        catch (GenICam::GenericException& ge)
+        {
+            std::cout << "\nGenICam exception thrown: " << ge.what() << "\n";
+        }
+    });
+
+    return 0;
+}
+
+int ToF::ToFSensor::setDevice(const std::string &serial) {
+    serial_ = serial;
+    return 0;
+}
+
+int ToF::ToFSensor::stop() {
+    stopStream();
+    if (acquisition_thread.joinable())
+        acquisition_thread.join();
+    return 0;
 }

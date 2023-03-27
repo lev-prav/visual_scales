@@ -24,10 +24,9 @@ namespace  ToF {
         int connect();
 
         int run();
+        int stop();
 
-        int startStream(const std::string& serialNumber);
-
-        int stopStream(int deviceNumber = 0);
+        int setDevice(const std::string& serial);
 
         inline auto countAvailableDevices() {
             return systemDevices.size();
@@ -40,14 +39,20 @@ namespace  ToF {
         ~ToFSensor();
 
     private:
+        int startStream();
+        int stopStream(int deviceNumber = 0);
+
         std::vector<Arena::DeviceInfo>::iterator getToFDevice(const std::string& serialNumber);
 
         Arena::ISystem *pSystem = nullptr;
         std::vector<Arena::DeviceInfo> systemDevices;
         std::vector<std::unique_ptr<AcquisitionThread>> acqThreads;
         std::vector<std::shared_ptr<ToFDevice>> devices;
+        std::string serial_;
 
         std::shared_ptr<Buffer> buffer_;
+
+        std::thread acquisition_thread;
     };
 };
 

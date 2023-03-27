@@ -7,6 +7,7 @@
 #include "GLFW/glfw3.h" // Will drag system OpenGL headers
 #include <utility>
 #include <vector>
+#include <functional>
 
 #include "stb_image.h"
 #include "../buffer/BufferReader.h"
@@ -24,6 +25,7 @@ public:
     explicit Viewer(std::shared_ptr<BufferReader> reader) : bufferReader_(std::move(reader)) {}
 
     int run();
+    void set_activation_listener();
 private:
     ImGuiIO& configure_context(GLFWwindow* window);
 
@@ -33,6 +35,8 @@ private:
     void rendering(GLFWwindow* window, ImGuiIO& io);
     void stop(GLFWwindow* window);
 
+    void onActivate();
+
     static void glfw_error_callback(int error, const char* description){
         fprintf(stderr, "Glfw Error %d: %s\n", error, description);
     }
@@ -40,6 +44,8 @@ private:
     std::shared_ptr<BufferReader> bufferReader_;
     bool activated = false;
     bool stop_view = false;
+
+    std::function<int(bool)> activation_callback;
 };
 
 

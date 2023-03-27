@@ -52,7 +52,10 @@ add_subdirectory(third-party/imgui)
 
 link_directories(${LIB_DIRS})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+message(${CMAKE_BINARY_DIR})
 
 set(HEADER_DIR include)
 set(SRC_DIR src)
@@ -66,6 +69,11 @@ set(HEADERS ${HEADER_DIR}/ToFSensor.h
             ${THIRD_PARTY}/stb/stb_image.h
             ${THIRD_PARTY}/imgui/backends/imgui_impl_glfw.h
             ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.h
+            ${HEADER_DIR}/gui/Viewer.h
+            ${HEADER_DIR}/Image.h
+            ${HEADER_DIR}/gui/Texture.h
+            ${HEADER_DIR}/buffer/Buffer.h
+            ${HEADER_DIR}/buffer/BufferReader.h
         )
 
 set(SOURCES ${HEADERS}
@@ -76,13 +84,8 @@ set(SOURCES ${HEADERS}
             ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.cpp
             ${SRC_DIR}/gui/show_image.cpp
         src/gui/Viewer.cpp
-        include/gui/Viewer.h
-        include/Image.h
-        include/gui/Texture.h
         src/buffer/Buffer.cpp
-        include/buffer/Buffer.h
         src/ToFDevice.cpp
-        include/buffer/BufferReader.h
         src/buffer/BufferReader.cpp)
 
 #add_executable(tof  ${SOURCES}
@@ -90,6 +93,7 @@ set(SOURCES ${HEADERS}
 #target_link_libraries(tof  ${LIBS} )
 
 
-add_library(tof ${SOURCES})
-target_link_libraries(tof ${LIBS})
+add_library(_tof ${SOURCES})
+target_link_libraries(_tof ${LIBS})
+
 

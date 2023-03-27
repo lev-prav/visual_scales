@@ -13,6 +13,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <thread>
 
 #define PIXEL_FORMAT Coord3D_C16
 namespace ToF{
@@ -26,19 +27,19 @@ public:
             {}
 
     int run();
-
+    int stop();
 private:
 
     int saveImage(const std::string &filename, const Image& image);
     void log(const std::string& fname);
     int read_buffer();
 
-    bool work = true;
+    bool work = false;
     int counter;
     std::ofstream fout;
     std::string base_filename;
     std::shared_ptr<BufferReader> bufferReader_;
-
+    std::thread acquisition_thread;
 };
 
 
