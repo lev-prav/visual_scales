@@ -25,7 +25,7 @@ public:
     explicit Viewer(std::shared_ptr<BufferReader> reader) : bufferReader_(std::move(reader)) {}
 
     int run();
-    void set_activation_listener();
+    void set_activation_listener(std::function<void(bool)> function);
 private:
     ImGuiIO& configure_context(GLFWwindow* window);
 
@@ -45,7 +45,7 @@ private:
     bool activated = false;
     bool stop_view = false;
 
-    std::function<int(bool)> activation_callback;
+    std::function<void(bool)> activation_callback;
 };
 
 

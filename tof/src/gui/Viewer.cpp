@@ -2,6 +2,7 @@
 #include "../../include/gui/Viewer.h"
 #include "../../include/gui/Texture.h"
 #include <cstdio>
+#include <utility>
 
 static int counter = 0;
 
@@ -178,6 +179,6 @@ void Viewer::onActivate() {
     activation_callback(activated);
 }
 
-void Viewer::set_activation_listener() {
-
+void Viewer::set_activation_listener(std::function<void(bool)> function) {
+    activation_callback = std::move(function);
 }
