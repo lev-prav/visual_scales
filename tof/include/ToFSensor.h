@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 #include <stdexcept>
-#include "ArenaApi.h"
+#include <ArenaApi.h>
 #include "SaveApi.h"
 #include "AcquisitionThread.h"
 #include "ToFDevice.h"

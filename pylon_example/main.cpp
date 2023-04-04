@@ -12,13 +12,10 @@ static const uint32_t c_countOfImagesToGrab = 10;
 using cam = Pylon::CBaslerUniversalInstantCamera;
 using cam_ptr = std::shared_ptr<cam>;
 
-int main( int argc, char* argv[] )
+int run_baslers( std::string save_dir = "../images/")
 {
     bool work = true;
-    std::string save_dir = "../images/";
-    if (argc > 1){
-        save_dir = argv[1];
-    }
+
     auto stream = [&work, &save_dir](cam_ptr cam, int cam_index) {
         cam->StartGrabbing();
 
@@ -28,7 +25,7 @@ int main( int argc, char* argv[] )
         int counter = 0;
 
         for (uint32_t i = 0; cam->IsGrabbing() && work; ++i, counter++) {
-            cam->RetrieveResult(20000, ptrGrabResult);
+            cam->RetrieveResult(2000, ptrGrabResult);
             milliseconds ms = duration_cast< milliseconds>(system_clock::now().time_since_epoch());
 
             // Image grabbed successfully?

@@ -52,8 +52,7 @@ add_subdirectory(third-party/imgui)
 
 link_directories(${LIB_DIRS})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../lib)
 
 message(${CMAKE_BINARY_DIR})
 
@@ -93,7 +92,7 @@ set(SOURCES ${HEADERS}
 #target_link_libraries(tof  ${LIBS} )
 
 
-add_library(_tof ${SOURCES})
-target_link_libraries(_tof ${LIBS})
+add_library(tof ${SOURCES} )
+target_link_libraries(tof PRIVATE ${LIBS})
 
 
