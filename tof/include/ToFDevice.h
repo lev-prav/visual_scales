@@ -7,7 +7,7 @@
 
 #include "ArenaApi.h"
 #include "SaveApi.h"
-#include "IDevice.h"
+#include "../../common/IDevice.h"
 #include "buffer/Buffer.h"
 
 #define PIXEL_FORMAT_TRANSFORM "Coord3D_C16"
@@ -17,7 +17,7 @@
 namespace ToF{
 class ToFDevice : public IDevice {
 public:
-    ToFDevice(Arena::IDevice *pDevice, const std::shared_ptr<Buffer>& buffer):
+    ToFDevice(Arena::IDevice *pDevice, const std::shared_ptr<Buffer<Image>>& buffer):
     pDevice_(pDevice), buffer_(buffer){
         //saver = std::make_unique<ToFSaver>("/home/lev/data/4Cameras/visual_scales/data/");
     }
@@ -53,7 +53,7 @@ public:
 private:
     Arena::IDevice* pDevice_;
     Arena::IImage* pImage_;
-    std::shared_ptr<Buffer> buffer_;
+    std::shared_ptr<Buffer<Image>> buffer_;
 };
 
 }

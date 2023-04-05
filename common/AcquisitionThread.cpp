@@ -1,6 +1,7 @@
-#include "../include/AcquisitionThread.h"
+#include <iostream>
+#include "AcquisitionThread.h"
 
-void ToF::AcquisitionThread::run() {
+void AcquisitionThread::run() {
 
     thread = std::thread([&](){
         dataSource->start();
@@ -12,11 +13,13 @@ void ToF::AcquisitionThread::run() {
         }
 
         dataSource->stop();
+        std::cout<<"STOP\n";
     });
 
 }
 
-void ToF::AcquisitionThread::stop() {
+void AcquisitionThread::stop() {
     isRunning = false;
-    thread.join();
+    if (thread.joinable())
+        thread.join();
 }

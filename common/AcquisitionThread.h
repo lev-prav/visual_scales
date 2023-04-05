@@ -10,7 +10,6 @@
 #include <atomic>
 #include <utility>
 
-namespace ToF{
 class AcquisitionThread {
 public:
     AcquisitionThread(std::shared_ptr<IDevice> dataSource) :
@@ -25,6 +24,5 @@ private:
     std::thread thread;
 };
 
-}
 
 #endif //TOF_ACQUISITIONTHREAD_H

@@ -83,9 +83,9 @@ set(SOURCES ${HEADERS}
             ${THIRD_PARTY}/imgui/backends/imgui_impl_opengl3.cpp
             ${SRC_DIR}/gui/show_image.cpp
         src/gui/Viewer.cpp
-        src/buffer/Buffer.cpp
+        ../common/buffer/Buffer.cpp
         src/ToFDevice.cpp
-        src/buffer/BufferReader.cpp)
+        ../common/buffer/BufferReader.cpp)
 
 #add_executable(tof  ${SOURCES}
 #                    main.cpp)

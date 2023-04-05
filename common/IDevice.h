@@ -15,6 +15,6 @@ public:
     virtual void clean() = 0;
     virtual void stop() = 0;
 
-    virtual ~IDevice() = default;;
+    virtual ~IDevice() = default;
 };
 #endif //TOF_IDEVICE_H

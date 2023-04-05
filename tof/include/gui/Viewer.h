@@ -10,7 +10,7 @@
 #include <functional>
 
 #include "stb_image.h"
-#include "../buffer/BufferReader.h"
+#include "buffer/BufferReader.h"
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -22,7 +22,7 @@
 
 class Viewer {
 public:
-    explicit Viewer(std::shared_ptr<BufferReader> reader) : bufferReader_(std::move(reader)) {}
+    explicit Viewer(std::shared_ptr<BufferReader<Image>> reader) : bufferReader_(std::move(reader)) {}
 
     int run();
     void set_activation_listener(std::function<void(bool)> function);
@@ -41,7 +41,7 @@ private:
         fprintf(stderr, "Glfw Error %d: %s\n", error, description);
     }
 
-    std::shared_ptr<BufferReader> bufferReader_;
+    std::shared_ptr<BufferReader<Image>> bufferReader_;
     bool activated = false;
     bool stop_view = false;
 

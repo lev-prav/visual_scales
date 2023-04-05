@@ -5,41 +5,22 @@
 #ifndef TOF_TOFSAVER_H
 #define TOF_TOFSAVER_H
 
-#include "ISaver.h"
 #include "ArenaApi.h"
 #include "SaveApi.h"
 #include "buffer/BufferReader.h"
-#include "Image.h"
+#include "../../scanner/BaseSaver.h"
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <thread>
 
-#define PIXEL_FORMAT Coord3D_C16
 namespace ToF{
-class ToFSaver {
+class ToFSaver : public BaseSaver<Image>{
 public:
-    ToFSaver(const std::string &directory, std::shared_ptr<BufferReader> reader) :
-            base_filename(directory + "image_"),
-            counter(0),
-            fout(directory + "tof_log.txt"),
-            bufferReader_(reader)
+    ToFSaver(const std::string &directory, std::shared_ptr<BufferReader<Image>> reader) :
+            BaseSaver(directory, reader, "tof_", "tof_log.txt")
             {}
 
-    int run();
-    int stop();
-private:
+protected:
 
-    int saveImage(const std::string &filename, const Image& image);
-    void log(const std::string& fname);
-    int read_buffer();
-
-    bool work = false;
-    int counter;
-    std::ofstream fout;
-    std::string base_filename;
-    std::shared_ptr<BufferReader> bufferReader_;
-    std::thread acquisition_thread;
+    int saveImage(const std::string &filename, const Image& image) override;
 };
 
 

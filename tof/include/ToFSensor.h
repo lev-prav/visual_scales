@@ -13,13 +13,13 @@
 #include <stdexcept>
 #include <ArenaApi.h>
 #include "SaveApi.h"
-#include "AcquisitionThread.h"
+#include "../../common/AcquisitionThread.h"
 #include "ToFDevice.h"
 
 namespace  ToF {
     class ToFSensor {
     public:
-        explicit ToFSensor(std::shared_ptr<Buffer> buffer_ptr) : buffer_(std::move(buffer_ptr)) {}
+        explicit ToFSensor(std::shared_ptr<Buffer<Image>> buffer_ptr) : buffer_(std::move(buffer_ptr)) {}
 
         int connect();
 
@@ -50,7 +50,7 @@ namespace  ToF {
         std::vector<std::shared_ptr<ToFDevice>> devices;
         std::string serial_;
 
-        std::shared_ptr<Buffer> buffer_;
+        std::shared_ptr<Buffer<Image>> buffer_;
 
         std::thread acquisition_thread;
     };

@@ -62,7 +62,8 @@ ToF::ToFSensor::~ToFSensor() {
     Arena::CloseSystem(pSystem);
 }
 
-std::vector<Arena::DeviceInfo>::iterator ToF::ToFSensor::getToFDevice(const std::string& serialNumber) {
+std::vector<Arena::DeviceInfo>::iterator
+ToF::ToFSensor::getToFDevice(const std::string& serialNumber) {
     GenICam::gcstring serialToFind(serialNumber.c_str());
 
     auto it = std::find_if(begin(systemDevices), end(systemDevices), [&serialToFind](Arena::DeviceInfo deviceInfo)
