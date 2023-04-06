@@ -11,7 +11,6 @@
 
 struct BaslerImage {
     int camera_index;
-    int counter;
     Pylon::CGrabResultPtr ptrGrabResult;
 };
 

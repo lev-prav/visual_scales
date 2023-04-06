@@ -16,10 +16,10 @@ public:
     explicit Buffer(unsigned int length = 60) : length_(length){}
 
     int push_back(const T& image){
-        std::lock_guard lock_w(write_mutex_);
+        //std::lock_guard lock_w(write_mutex_);
         std::unique_lock lock(read_mutex_);
 
-        if (buffer_.size() > length_){
+        if (buffer_.size() >= length_){
             buffer_.pop_front();
             notify_readers();
         }
@@ -46,6 +46,10 @@ public:
         return length_;
     };
 
+    unsigned int size(){
+        return buffer_.size();
+    }
+
 private:
     void notify_readers(){
         for(auto& reader : readers_){
@@ -56,7 +60,6 @@ private:
     unsigned int length_ = 0;
     std::deque<T> buffer_;
     std::shared_mutex read_mutex_;
-    std::mutex write_mutex_;
 
     std::vector<std::shared_ptr<BufferReader<T>>> readers_;
 };

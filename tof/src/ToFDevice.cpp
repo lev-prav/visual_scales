@@ -22,7 +22,7 @@ void ToF::ToFDevice::save() {
             Mono8);
 
     auto bits = rgb_image->GetBitsPerPixel();
-    std::cout<<"Convert bits :"<<bits<<" : "<<pImage_->GetBitsPerPixel()<<"\n";
+    //std::cout<<"Convert bits :"<<bits<<" : "<<pImage_->GetBitsPerPixel()<<"\n";
     buffer_->push_back(
             {
                 .width = im_width,
@@ -86,4 +86,20 @@ void ToF::ToFDevice::prepareDevice() {
             "LineSource",
             "ExposureActive");
 
+    auto min_fps = Arena::GetNodeMin<double>(
+            pDevice_->GetNodeMap(),
+            "AcquisitionFrameRate");
+    auto max_fps = Arena::GetNodeMax<double>(
+            pDevice_->GetNodeMap(),
+            "AcquisitionFrameRate");
+
+    Arena::SetNodeValue<bool>(
+            pDevice_->GetNodeMap(),
+            "AcquisitionFrameRateEnable",
+            true);
+
+    Arena::SetNodeValue<double>(
+            pDevice_->GetNodeMap(),
+            "AcquisitionFrameRate",
+            15.0);
 }

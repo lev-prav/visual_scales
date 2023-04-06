@@ -27,7 +27,7 @@ public:
 
 private:
     int index_;
-    int counter_ = 0;
+    bool succeeded_ = false;
     cam_ptr camera_;
     std::shared_ptr<Buffer<BaslerImage>> buffer_;
     Pylon::CGrabResultPtr ptrGrabResult;

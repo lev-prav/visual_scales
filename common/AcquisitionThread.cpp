@@ -13,7 +13,6 @@ void AcquisitionThread::run() {
         }
 
         dataSource->stop();
-        std::cout<<"STOP\n";
     });
 
 }

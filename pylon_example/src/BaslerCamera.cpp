@@ -29,22 +29,14 @@ void BaslerCamera::start() {
 
 void BaslerCamera::acquire() {
 
+    std::cout<<"ACQUIRE ???\n";
     if( camera_->IsGrabbing()) {
-        camera_->RetrieveResult(INFINITE, ptrGrabResult);
-
+        std::cout<<"ACQUIRE -\n";
+        camera_->RetrieveResult(3000, ptrGrabResult);
+        std::cout<<"ACQUIRE + \n";
         // Image grabbed successfully?
-        if (ptrGrabResult->GrabSucceeded()) {
-
-            intptr_t cameraContextValue = ptrGrabResult->GetCameraContext();
-            counter_++;
-            // Print the index and the model name of the camera.
-/*            cout << "Camera " << index_ << ": " << camera_->GetDeviceInfo().GetModelName() << "\n"
-                 << "GrabSucceeded: " << ptrGrabResult->GrabSucceeded() << "\n"
-                 << "SizeX: " << ptrGrabResult->GetWidth() << "\n"
-                 << "SizeY: " << ptrGrabResult->GetHeight() << "\n";
-*/
-
-        } else {
+        succeeded_ = ptrGrabResult->GrabSucceeded();
+        if (not succeeded_) {
             cout << "Error: " << std::hex << ptrGrabResult->GetErrorCode() << std::dec << " "
                  << ptrGrabResult->GetErrorDescription() << endl;
         }
@@ -52,12 +44,15 @@ void BaslerCamera::acquire() {
 }
 
 void BaslerCamera::save() {
+    if (not succeeded_)
+        return;
+
     BaslerImage basImg;
     basImg.camera_index = index_;
-    basImg.counter = counter_;
     basImg.ptrGrabResult = ptrGrabResult;
-
+    std::cout<<"Push baby push\n";
     buffer_->push_back(basImg);
+    std::cout<<"CAM BUF SIZE: "<<buffer_->size() <<"Length : " <<buffer_->length() <<" \n";
 }
 
 void BaslerCamera::stop() {
@@ -65,6 +60,6 @@ void BaslerCamera::stop() {
 }
 
 void BaslerCamera::clean() {
-
+    //ptrGrabResult = CGrabResultPtr();
 }
 
