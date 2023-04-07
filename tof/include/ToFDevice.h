@@ -15,6 +15,11 @@
 
 
 namespace ToF{
+    struct FrameLimits{
+        double min = 0;
+        double max = 0;
+    };
+
 class ToFDevice : public IDevice {
 public:
     ToFDevice(Arena::IDevice *pDevice, const std::shared_ptr<Buffer<Image>>& buffer):
@@ -46,11 +51,18 @@ public:
         return pDevice_;
     }
 
+    int setFrameRate(double rate);
+    double getFrameRate();
+    const FrameLimits& getFrameLimits();
+
     ~ToFDevice() override {
         std::cout<<"DESTROY DEVICE\n";
     }
 
 private:
+    double fps_;
+    FrameLimits frameLimits_;
+
     Arena::IDevice* pDevice_;
     Arena::IImage* pImage_;
     std::shared_ptr<Buffer<Image>> buffer_;

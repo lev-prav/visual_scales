@@ -11,6 +11,7 @@
 
 #include "stb_image.h"
 #include "buffer/BufferReader.h"
+#include "Scanner.h"
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -22,16 +23,19 @@
 
 class Viewer {
 public:
-    explicit Viewer(std::shared_ptr<BufferReader<Image>> reader) : bufferReader_(std::move(reader)) {}
+    explicit Viewer(std::shared_ptr<BufferReader<Image>> reader) :
+    bufferReader_(std::move(reader)) {}
 
     int run();
     void set_activation_listener(std::function<void(bool)> function);
+    void set_fps_controller(std::shared_ptr<Scanner::FPSController> controller);
 private:
     ImGuiIO& configure_context(GLFWwindow* window);
 
 //    void create_stream_window( unsigned char** images );
     int update_image(int& im_width, int& im_height);
     void create_stream_window(const GLuint &textur);
+    void create_fps_window(float* rate, const ToF::FrameLimits& limits);
     void rendering(GLFWwindow* window, ImGuiIO& io);
     void stop(GLFWwindow* window);
 
@@ -46,6 +50,7 @@ private:
     bool stop_view = false;
 
     std::function<void(bool)> activation_callback;
+    std::shared_ptr<Scanner::FPSController> fps_controller_;
 };
 
 

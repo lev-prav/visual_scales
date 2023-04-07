@@ -86,6 +86,12 @@ void ToF::ToFDevice::prepareDevice() {
             "LineSource",
             "ExposureActive");
 
+
+    Arena::SetNodeValue<bool>(
+            pDevice_->GetNodeMap(),
+            "AcquisitionFrameRateEnable",
+            true);
+
     auto min_fps = Arena::GetNodeMin<double>(
             pDevice_->GetNodeMap(),
             "AcquisitionFrameRate");
@@ -93,13 +99,33 @@ void ToF::ToFDevice::prepareDevice() {
             pDevice_->GetNodeMap(),
             "AcquisitionFrameRate");
 
-    Arena::SetNodeValue<bool>(
+    frameLimits_ = {
+            .min = min_fps,
+            .max = max_fps
+    };
+
+    fps_ = Arena::GetNodeValue<double>(
             pDevice_->GetNodeMap(),
-            "AcquisitionFrameRateEnable",
-            true);
+            "AcquisitionFrameRate");
+
+}
+
+int ToF::ToFDevice::setFrameRate(double rate) {
+    if (rate <  frameLimits_.min or rate > frameLimits_.max)
+        return EXIT_FAILURE;
 
     Arena::SetNodeValue<double>(
             pDevice_->GetNodeMap(),
             "AcquisitionFrameRate",
-            15.0);
+            rate);
+    fps_ = rate;
+    return EXIT_SUCCESS;
+}
+
+const ToF::FrameLimits& ToF::ToFDevice::getFrameLimits() {
+    return frameLimits_;
+}
+
+double ToF::ToFDevice::getFrameRate() {
+    return fps_;
 }

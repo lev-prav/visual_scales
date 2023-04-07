@@ -1,6 +1,7 @@
 #include <iostream>
 #include "../../include/gui/Viewer.h"
 #include "../../include/gui/Texture.h"
+#include "../../include/ToFDevice.h"
 #include <cstdio>
 #include <utility>
 
@@ -120,8 +121,10 @@ int Viewer::run() {
     GLFWwindow* window = glfwCreateWindow(win_width, win_height, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
 
     ImGuiIO& io = configure_context(window);
-
     Texture texture = Texture::create_texture();
+
+    auto frameLimits = fps_controller_->getFrameLimits();
+    float fps = fps_controller_->getFrameRate();
 
     // Main loop
     while (!glfwWindowShouldClose(window) and !stop_view)
@@ -135,6 +138,12 @@ int Viewer::run() {
 
 
         create_stream_window(texture.get_texture_id());
+        float current_fps = fps;
+        create_fps_window(&fps, frameLimits);
+        if (fps != current_fps){
+            fps_controller_->setFrameRate(double(fps));
+        }
+        //std::cout<<"FPS: "<<fps<<"\n";
 
         rendering(window, io);
 
@@ -181,4 +190,15 @@ void Viewer::onActivate() {
 
 void Viewer::set_activation_listener(std::function<void(bool)> function) {
     activation_callback = std::move(function);
+}
+
+void Viewer::create_fps_window(float* rate, const ToF::FrameLimits& limits) {
+
+    ImGui::Begin("FPS");
+    ImGui::SliderFloat("0 -> 30", rate , limits.min, limits.max, "ratio = %.3f");
+    ImGui::End();
+}
+
+void Viewer::set_fps_controller(std::shared_ptr<Scanner::FPSController> controller) {
+    fps_controller_ = std::move(controller);
 }

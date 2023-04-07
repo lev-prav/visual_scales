@@ -36,6 +36,16 @@ namespace  ToF {
             return devices.size();
         }
 
+        inline bool setFrameRate(double rate, int deviceIndx = 0){
+            return devices[deviceIndx]->setFrameRate(rate) == EXIT_SUCCESS;
+        }
+        inline double getFrameRate(int deviceIndx = 0){
+            return devices[deviceIndx]->getFrameRate();
+        }
+        inline const FrameLimits& getFrameLimits(int deviceIndx = 0){
+            return devices[deviceIndx]->getFrameLimits();
+        }
+
         ~ToFSensor();
 
     private:
