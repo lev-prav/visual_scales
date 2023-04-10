@@ -18,6 +18,7 @@ void ToF::ToFDevice::save() {
     //std::cout<<"Convert bits :"<<bits<<" : "<<pImage_->GetBitsPerPixel()<<"\n";
     buffer_->push_back(
             {
+                .id = images_grabbed_,
                 .width = im_width,
                 .height = im_height,
                 .bits_per_pixel = bits_per_pixel,

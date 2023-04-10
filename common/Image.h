@@ -3,6 +3,7 @@
 #include <memory>
 
 struct Image{
+    unsigned long long id ;
     int width;
     int height;
     int bits_per_pixel;

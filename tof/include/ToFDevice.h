@@ -33,6 +33,7 @@ public:
 
     void acquire() override {
         pImage_ = pDevice_->GetImage(2000);
+        images_grabbed_++;
     }
 
     void save() override;
@@ -61,6 +62,7 @@ public:
 
 private:
     double fps_;
+    unsigned long long images_grabbed_ = 0;
     FrameLimits frameLimits_;
 
     Arena::IDevice* pDevice_;

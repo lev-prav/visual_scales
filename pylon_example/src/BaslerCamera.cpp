@@ -20,8 +20,6 @@ BaslerCamera::BaslerCamera(cam_ptr camera, const std::shared_ptr<Buffer<BaslerIm
     camera_->LineSelector.SetValue(Basler_UniversalCameraParams::LineSelector_Line1);
     camera_->TriggerMode.SetValue(Basler_UniversalCameraParams::TriggerMode_On);
     camera_->LineMode.SetValue(Basler_UniversalCameraParams::LineMode_Input);
-
-    camera_->AcquisitionMode.SetValue(Basler_UniversalCameraParams::AcquisitionMode_Continuous);
 }
 
 void BaslerCamera::start() {
@@ -40,11 +38,15 @@ void BaslerCamera::acquire() {
             succeeded_ = false;
             return ;
         }
+
         // Image grabbed successfully?
         succeeded_ = ptrGrabResult->GrabSucceeded();
+        images_grabbed_++;
+
         if (not succeeded_) {
             cout << "Error: " << std::hex << ptrGrabResult->GetErrorCode() << std::dec << " "
                  << ptrGrabResult->GetErrorDescription() << endl;
+            return ;
         }
     }
 }
@@ -73,10 +75,11 @@ void BaslerCamera::save() {
 
     auto lock_buffer = buffer_.lock();
     lock_buffer->push_back({
-                                   .camera_index = index_,
-                                   .image = image
-                           });
-    std::cout<<"CAM BUF SIZE: "<<lock_buffer->size() <<"Length : " <<lock_buffer->length() <<" \n";
+        .id = images_grabbed_,
+        .camera_index = index_,
+        .image = image
+    });
+    std::cout<<"CAM BUF SIZE: "<<lock_buffer->size() <<"; Length : " <<lock_buffer->length() <<" \n";
 }
 
 void BaslerCamera::stop() {

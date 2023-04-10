@@ -13,7 +13,7 @@ int BaslerSaver::saveImage(const std::string &filename, const BaslerImage &image
 
     auto& res_image = image_.image;
     std::stringstream fname_stream;
-    fname_stream << base_filename << image_.camera_index << "_" << counter << "_.tiff";
+    fname_stream << base_filename << image_.camera_index << "_" << image_.id << "_.tiff";
     std::string path = fname_stream.str();
     std::cout << path<<"\n";
     try{

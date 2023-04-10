@@ -28,11 +28,11 @@ public:
     ~BaslerCamera();
 private:
     int index_;
+    unsigned long long images_grabbed_ = 0;
     bool succeeded_ = false;
     cam_ptr camera_;
     std::weak_ptr<Buffer<BaslerImage>> buffer_;
     Pylon::CGrabResultPtr ptrGrabResult;
-
 };
 
 

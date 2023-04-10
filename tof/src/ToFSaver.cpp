@@ -10,10 +10,11 @@ int ToF::ToFSaver::saveImage(const std::string &filename, const Image& image)  {
             image.width,
             image.height,
             image.bits_per_pixel);
-
+    std::stringstream fname_stream;
+    fname_stream << base_filename << "_" << image.id << "_.tiff";
     Save::ImageWriter writer(
             params,
-            filename.c_str());
+            fname_stream.str().c_str());
 
     int data_size = image.width*image.height*(image.bits_per_pixel/8);
 
