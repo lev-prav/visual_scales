@@ -17,7 +17,7 @@ using cam_ptr = std::shared_ptr<cam>;
 
 class BaslerCamera  : public IDevice {
 public:
-    explicit BaslerCamera(cam_ptr camera, std::shared_ptr<Buffer<BaslerImage>> buffer, int index);
+    explicit BaslerCamera(cam_ptr camera, const std::shared_ptr<Buffer<BaslerImage>>& buffer, int index);
 
     void start() override;
     void acquire() override;
@@ -25,11 +25,12 @@ public:
     void clean() override;
     void stop() override;
 
+    ~BaslerCamera();
 private:
     int index_;
     bool succeeded_ = false;
     cam_ptr camera_;
-    std::shared_ptr<Buffer<BaslerImage>> buffer_;
+    std::weak_ptr<Buffer<BaslerImage>> buffer_;
     Pylon::CGrabResultPtr ptrGrabResult;
 
 };

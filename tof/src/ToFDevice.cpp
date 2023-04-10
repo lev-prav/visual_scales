@@ -13,15 +13,8 @@ void ToF::ToFDevice::save() {
 
 
     unsigned char* data = new unsigned char [buff_size];
-
-    auto size = pImage_->GetSizeOfBuffer();
     memcpy(data, (unsigned char*)pImage_->GetData(), buff_size);
 
-    auto* rgb_image = Arena::ImageFactory::Convert(
-            pImage_,
-            Mono8);
-
-    auto bits = rgb_image->GetBitsPerPixel();
     //std::cout<<"Convert bits :"<<bits<<" : "<<pImage_->GetBitsPerPixel()<<"\n";
     buffer_->push_back(
             {
@@ -103,6 +96,11 @@ void ToF::ToFDevice::prepareDevice() {
             .min = min_fps,
             .max = max_fps
     };
+
+    Arena::SetNodeValue<double>(
+            pDevice_->GetNodeMap(),
+            "AcquisitionFrameRate",
+            max_fps);
 
     fps_ = Arena::GetNodeValue<double>(
             pDevice_->GetNodeMap(),

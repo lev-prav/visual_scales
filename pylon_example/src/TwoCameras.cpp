@@ -13,7 +13,7 @@ const uint32_t c_countOfImagesToGrab = 10;
 
 TwoCameras::TwoCameras(const std::string &save_dir, int buffer_size) {
     buffer_ = std::make_shared<Buffer<BaslerImage>>(buffer_size);
-    saver_ = std::make_unique<BaslerSaver>(save_dir, buffer_->get_reader());
+    saver_ = std::make_unique<BaslerSaver>(save_dir, Buffer<BaslerImage>::get_reader(buffer_));
     configure();
 
 }

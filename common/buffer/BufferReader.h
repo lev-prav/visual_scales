@@ -8,17 +8,18 @@ class Buffer;
 
 template <class T>
 class BufferReader{
+    friend class Buffer<T> ;
 public:
-    BufferReader(Buffer<T>& buffer) : buffer_(buffer) {}
 
-    bool                    move_forward(){
-        if (position_ >= buffer_.length()) {
+    bool move_forward(){
+
+        if (buffer_.expired() or position_ >= buffer_.lock()->length()) {
             return false;
         }
         position_++;
         return true;
     }
-    bool                    move_back(){
+    bool move_back(){
         if (position_ > 0) {
             position_--;
             return true;
@@ -26,9 +27,15 @@ public:
         return false;
     }
     std::optional<T>    get_data(){
-        return buffer_.read(position_);
+        if (buffer_.expired())
+            return {};
+
+        return buffer_.lock()->read(position_);
+    }
+protected:
+    explicit BufferReader(const std::shared_ptr<Buffer<T>>& buffer) : buffer_(buffer) {
     }
 private:
     unsigned int position_ = 0;
-    Buffer<T>& buffer_;
+    std::weak_ptr<Buffer<T>> buffer_;
 };

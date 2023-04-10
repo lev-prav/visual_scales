@@ -24,7 +24,6 @@ public:
             notify_readers();
         }
         buffer_.push_back(image);
-
         return 0;
     };
     std::optional<T> read(unsigned int position){
@@ -35,11 +34,11 @@ public:
         std::shared_lock lock(read_mutex_);
         return buffer_[position];
     };
-    std::shared_ptr<BufferReader<T>> get_reader(){
-        auto* raw_reader = new BufferReader(*this);
+    static std::shared_ptr<BufferReader<T>> get_reader(const std::shared_ptr<Buffer<T>>& buffer){
+        auto* raw_reader = new BufferReader<T>(buffer);
 
         std::shared_ptr<BufferReader<T>> reader(raw_reader);
-        readers_.push_back(reader);
+        buffer->readers_.push_back(reader);
         return reader;
     };
     unsigned int length(){
@@ -60,7 +59,7 @@ private:
     unsigned int length_ = 0;
     std::deque<T> buffer_;
     std::shared_mutex read_mutex_;
-
+    std::shared_ptr<Buffer<T>> self;
     std::vector<std::shared_ptr<BufferReader<T>>> readers_;
 };
 
