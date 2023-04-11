@@ -13,7 +13,7 @@ struct BaslerImage {
     unsigned long long id ;
     int camera_index;
     Pylon::CPylonImage image;
-
+    long timestemp;
 };
 
 

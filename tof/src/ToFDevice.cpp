@@ -11,9 +11,11 @@ void ToF::ToFDevice::save() {
         im_width = pImage_->GetWidth(),
         buff_size = im_height*im_width * bytes_per_pixel;
 
+    using namespace std::chrono;
 
     unsigned char* data = new unsigned char [buff_size];
     memcpy(data, (unsigned char*)pImage_->GetData(), buff_size);
+    milliseconds ms = duration_cast< milliseconds>(system_clock::now().time_since_epoch());
 
     //std::cout<<"Convert bits :"<<bits<<" : "<<pImage_->GetBitsPerPixel()<<"\n";
     buffer_->push_back(
@@ -22,7 +24,8 @@ void ToF::ToFDevice::save() {
                 .width = im_width,
                 .height = im_height,
                 .bits_per_pixel = bits_per_pixel,
-                .data = std::shared_ptr<unsigned char[]>(data)
+                .data = std::shared_ptr<unsigned char[]>(data),
+                .timestemp = ms.count()
             });
 }
 

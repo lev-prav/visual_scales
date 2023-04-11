@@ -11,7 +11,7 @@ int ToF::ToFSaver::saveImage(const std::string &filename, const Image& image)  {
             image.height,
             image.bits_per_pixel);
     std::stringstream fname_stream;
-    fname_stream << base_filename << "_" << image.id << "_.tiff";
+    fname_stream << base_filename << "_" << image.id <<"_"<<image.timestemp<< "_.tiff";
     Save::ImageWriter writer(
             params,
             fname_stream.str().c_str());

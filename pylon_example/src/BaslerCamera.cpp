@@ -56,14 +56,20 @@ void BaslerCamera::save() {
         return;
 
     CPylonImage image;
-    image.CopyImage(
-            ptrGrabResult->GetBuffer(),
-            ptrGrabResult->GetBufferSize(),
-            ptrGrabResult->GetPixelType(),
-            ptrGrabResult->GetWidth(),
-            ptrGrabResult->GetHeight(),
-            ptrGrabResult->GetPaddingX()
-            );
+
+    try {
+        image.CopyImage(
+                ptrGrabResult->GetBuffer(),
+                ptrGrabResult->GetBufferSize(),
+                ptrGrabResult->GetPixelType(),
+                ptrGrabResult->GetWidth(),
+                ptrGrabResult->GetHeight(),
+                ptrGrabResult->GetPaddingX()
+        );
+    } catch (GenericException& ex){
+        std::cout<<ex.what()<<"\n";
+        return ;
+    }
 
     ptrGrabResult.Release();
 
@@ -72,12 +78,16 @@ void BaslerCamera::save() {
         return ;
     }
 
+    using namespace chrono;
+    milliseconds ms = duration_cast< milliseconds>(system_clock::now().time_since_epoch());
+
 
     auto lock_buffer = buffer_.lock();
     lock_buffer->push_back({
         .id = images_grabbed_,
         .camera_index = index_,
-        .image = image
+        .image = image,
+        .timestemp = ms.count()
     });
     std::cout<<"CAM BUF SIZE: "<<lock_buffer->size() <<"; Length : " <<lock_buffer->length() <<" \n";
 }

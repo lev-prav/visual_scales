@@ -8,6 +8,7 @@ struct Image{
     int height;
     int bits_per_pixel;
     std::shared_ptr<unsigned char[]> data;
+    long timestemp;
 };
 
 #endif //TOF_IMAGE_H

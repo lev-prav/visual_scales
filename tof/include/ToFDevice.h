@@ -32,8 +32,12 @@ public:
     }
 
     void acquire() override {
-        pImage_ = pDevice_->GetImage(2000);
-        images_grabbed_++;
+        try{
+            pImage_ = pDevice_->GetImage(2000);
+            images_grabbed_++;
+        } catch (...){
+        }
+
     }
 
     void save() override;
