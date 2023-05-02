@@ -18,9 +18,14 @@ int ToF::ToFSaver::saveImage(const std::string &filename, const Image& image)  {
 
     int data_size = image.width*image.height*(image.bits_per_pixel/8);
 
-    auto* save_image_data = new unsigned char[data_size];
+    auto* save_image_data = new uint8_t [data_size];
     std::memcpy(save_image_data,image.data.get(), data_size);
-    writer << save_image_data;
+    //auto* colors = new
+    writer.SetTiff();
+    writer.Save(save_image_data);
+    //writer << save_image_data;
     delete[] save_image_data;
+
+    return 0;
 }
 

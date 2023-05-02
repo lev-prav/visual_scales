@@ -66,6 +66,7 @@ void Viewer::create_stream_window(const GLuint &texture) {
         activated = !activated;
         onActivate();
     }
+
     ImGui::SameLine();
     if (ImGui::Button("Somebody STOP ME") )
         stop_view = true;

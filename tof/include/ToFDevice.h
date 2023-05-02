@@ -10,7 +10,8 @@
 #include "../../common/IDevice.h"
 #include "buffer/Buffer.h"
 
-#define PIXEL_FORMAT_TRANSFORM "Coord3D_C16"
+// Coord3D_ABCY16
+#define PIXEL_FORMAT_TRANSFORM "Mono16"
 #define PIXEL_FORMAT Coord3D_C16
 
 
@@ -35,6 +36,8 @@ public:
         try{
             pImage_ = pDevice_->GetImage(2000);
             images_grabbed_++;
+            std::cout<<"tof_ "<<images_grabbed_<<"\n";
+
         } catch (...){
         }
 

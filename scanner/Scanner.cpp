@@ -15,7 +15,7 @@ Scanner::Scanner(const std::string& tofSerialNumber, const std::string& output_d
     fpsController_ = std::make_shared<Scanner::FPSController>(this);
 
     saver_ = std::make_unique<ToF::ToFSaver>(output_dir, Buffer<Image>::get_reader(buffer_));
-    cameras_ = std::make_unique<TwoCameras>(output_dir, buffer_size*2);
+    cameras_ = std::make_unique<TwoCameras>(output_dir, buffer_size);
 }
 
 int Scanner::stop() {

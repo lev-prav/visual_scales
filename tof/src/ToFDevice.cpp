@@ -4,12 +4,15 @@
 
 
 void ToF::ToFDevice::save() {
+    if (pImage_->IsIncomplete())
+        return;
     int bits_per_pixel = pImage_->GetBitsPerPixel();
     int bytes_per_pixel = bits_per_pixel / 8;
 
     int im_height = pImage_->GetHeight(),
         im_width = pImage_->GetWidth(),
         buff_size = im_height*im_width * bytes_per_pixel;
+    auto s = pImage_->GetSizeOfBuffer();
 
     using namespace std::chrono;
 
@@ -18,6 +21,10 @@ void ToF::ToFDevice::save() {
     milliseconds ms = duration_cast< milliseconds>(system_clock::now().time_since_epoch());
 
     //std::cout<<"Convert bits :"<<bits<<" : "<<pImage_->GetBitsPerPixel()<<"\n";
+//    auto* rgb_image = Arena::ImageFactory::Convert(
+//            pImage_,
+//            Mono8);
+
     buffer_->push_back(
             {
                 .id = images_grabbed_,
@@ -109,6 +116,17 @@ void ToF::ToFDevice::prepareDevice() {
     fps_ = Arena::GetNodeValue<double>(
             pDevice_->GetNodeMap(),
             "AcquisitionFrameRate");
+
+//    auto min_dist = Arena::GetNodeValue<GenICam::gcstring>(
+//            pDevice_->GetNodeMap(),
+//            "Scan3dOperatingMode");
+//    std::cout<<min_dist<<"\n";
+//
+//    //Distance5000mmMultiFreq;
+//    Arena::SetNodeValue<GenICam::gcstring>(
+//         pDevice_->GetNodeMap(),
+//         "Scan3dOperatingMode",
+//         "Distance1250mmSingleFreq");
 
 }
 

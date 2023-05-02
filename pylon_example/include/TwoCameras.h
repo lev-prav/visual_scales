@@ -20,8 +20,11 @@ public:
     ~TwoCameras();
 private:
     void configure();
-    std::unique_ptr<BaslerSaver> saver_;
-    std::shared_ptr<Buffer<BaslerImage>> buffer_;
+
+    int buffer_size_;
+    std::string save_dir_;
+    std::vector<std::unique_ptr<BaslerSaver>> savers_;
+    std::vector<std::shared_ptr<Buffer<BaslerImage>>> buffers_;
     std::vector<cam_ptr> cameras;
     std::vector<std::unique_ptr<AcquisitionThread>> threads;
 };

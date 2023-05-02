@@ -20,6 +20,7 @@ BaslerCamera::BaslerCamera(cam_ptr camera, const std::shared_ptr<Buffer<BaslerIm
     camera_->LineSelector.SetValue(Basler_UniversalCameraParams::LineSelector_Line1);
     camera_->TriggerMode.SetValue(Basler_UniversalCameraParams::TriggerMode_On);
     camera_->LineMode.SetValue(Basler_UniversalCameraParams::LineMode_Input);
+    //camera_->ExposureAuto.SetValue(Basler_UniversalCameraParams::ExposureAutoEnums::ExposureAuto_Continuous);
 }
 
 void BaslerCamera::start() {
@@ -42,6 +43,7 @@ void BaslerCamera::acquire() {
         // Image grabbed successfully?
         succeeded_ = ptrGrabResult->GrabSucceeded();
         images_grabbed_++;
+        std::cout<<index_<<" _ "<<images_grabbed_<<"\n";
 
         if (not succeeded_) {
             cout << "Error: " << std::hex << ptrGrabResult->GetErrorCode() << std::dec << " "

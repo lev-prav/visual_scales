@@ -12,8 +12,8 @@ const uint32_t c_countOfImagesToGrab = 10;
 
 
 TwoCameras::TwoCameras(const std::string &save_dir, int buffer_size) {
-    buffer_ = std::make_shared<Buffer<BaslerImage>>(buffer_size);
-    saver_ = std::make_unique<BaslerSaver>(save_dir, Buffer<BaslerImage>::get_reader(buffer_));
+    buffer_size_ = std::max(buffer_size,30);
+    save_dir_ = save_dir;
     configure();
 
 }
@@ -53,8 +53,13 @@ void TwoCameras::configure() {
         cameras[i]->TriggerMode.SetValue(Basler_UniversalCameraParams::TriggerMode_On);
         cameras[i]->LineMode.SetValue(Basler_UniversalCameraParams::LineMode_Input);
 
+        auto buffer_ = std::make_shared<Buffer<BaslerImage>>(buffer_size_);
+        auto saver_ = std::make_unique<BaslerSaver>(save_dir_, Buffer<BaslerImage>::get_reader(buffer_));
         auto basCam = std::make_shared<BaslerCamera>(cameras[i], buffer_, i);
+
         threads.emplace_back(std::make_unique<AcquisitionThread>(basCam));
+        buffers_.emplace_back(buffer_);
+        savers_.emplace_back(std::move(saver_));
 
         // Print the model name of the camera.
         cout << "Using device " << cameras[i]->GetDeviceInfo().GetModelName() << endl;
@@ -68,7 +73,8 @@ void TwoCameras::run() {
 }
 
 void TwoCameras::stop() {
-    saver_->stop();
+    save_off();
+
     for(auto& thread : threads){
         thread->stop();
     }
@@ -80,10 +86,13 @@ TwoCameras::~TwoCameras() {
 }
 
 void TwoCameras::save_on() {
-    saver_->run();
-}
+    for(auto& saver : savers_){
+        saver->run();
+    }}
 
 void TwoCameras::save_off() {
-    saver_->stop();
+    for(auto& saver : savers_){
+        saver->stop();
+    }
 }
 
